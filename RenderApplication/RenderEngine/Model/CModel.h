@@ -20,7 +20,8 @@ public:
 	typedef struct _S_MODEL_DESC
 	{
 		std::string		strPath;
-		float			size;
+		float			vertexResize = 1.0f;
+		float			textureResize = 1.0f;
 	}S_MODEL_DESC;
 public:
 	CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc);
@@ -31,7 +32,7 @@ private:
 	std::vector<CMesh::S_TEXTURE> LoadMaterialTextures(aiMaterial* mat,
 		aiTextureType type, std::string typeName);
 private:
-	bool InitializeRectangle(float size);
+	bool InitializeRectangle();
 	bool InitializeChess();
 private:
 	bool					m_ok;

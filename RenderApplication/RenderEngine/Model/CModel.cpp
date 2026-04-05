@@ -153,7 +153,7 @@ std::vector<CMesh::S_TEXTURE> CModel::LoadMaterialTextures(aiMaterial* mat, aiTe
     return textures;
 }
 
-bool CModel::InitializeRectangle(float size)
+bool CModel::InitializeRectangle()
 {
     std::vector<CMesh::S_VERTEX>	vertices;
     std::vector<unsigned int>	indices = {
@@ -162,13 +162,13 @@ bool CModel::InitializeRectangle(float size)
     };
     CMesh::S_VERTEX	LeftTop, RightTop, RightBottom, LeftBottom;
     LeftTop.Position = glm::vec3(-1.0f, 0.0f, -1.0f);
-    LeftTop.TexCoords = glm::vec2(0.0f, size);
+    LeftTop.TexCoords = glm::vec2(0.0f, 1.0f);
 
     RightTop.Position = glm::vec3(1.0f, 0.0f, -1.0f);
-    RightTop.TexCoords = glm::vec2(size, size);
+    RightTop.TexCoords = glm::vec2(1.0f, 1.0f);
 
     RightBottom.Position = glm::vec3(1.0f, 0.0f, 1.0f);
-    RightBottom.TexCoords = glm::vec2(size, 0.0f);
+    RightBottom.TexCoords = glm::vec2(1.0f, 0.0f);
 
     LeftBottom.Position = glm::vec3(-1.0f, 0.0f, 1.0f);
     LeftBottom.TexCoords = glm::vec2(0.0f, 0.0f);
@@ -178,13 +178,13 @@ bool CModel::InitializeRectangle(float size)
     vertices.push_back(RightBottom);
     vertices.push_back(LeftBottom);
 
-    m_vec_mesh.push_back(CMesh(vertices, indices));
+    m_vec_mesh.push_back(CMesh(vertices, indices, m_desc.vertexResize, m_desc.textureResize));
     return true;
 }
 
 bool CModel::InitializeChess()
 {
-    if (!InitializeRectangle(m_desc.size)) {
+    if (!InitializeRectangle()) {
         return false;
     }
     std::vector<CMesh::S_TEXTURE>	textures;
@@ -195,6 +195,7 @@ bool CModel::InitializeChess()
 
     CTexture::S_TEXTURE_DESC desc;
     desc.strPath = texture.strPath;
+    desc.TEX_GL_TEXTURE_MIN_FILTER = GL_LINEAR_MIPMAP_LINEAR;
     texture.texture = CResourceManager::AquireTexture(desc);
     if (0 == texture.texture) {
         PRINTLOG("Fail to create chess texture");

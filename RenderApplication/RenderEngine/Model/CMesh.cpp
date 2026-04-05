@@ -4,24 +4,41 @@
 
 CMesh::CMesh(std::vector<S_VERTEX> vertices,
     std::vector<unsigned int> indices,
+    float vertexResize,
+    float textureResize,
     unsigned int type)
 {
     m_nType = type;
     m_vec_Vertices = vertices;
     m_vec_Indices = indices;
+    m_VertexResize = vertexResize;
+    m_TextureResize = textureResize;
+    Resize();
     SetupMesh();
 }
 
 CMesh::CMesh(std::vector<S_VERTEX> vertices,
     std::vector<unsigned int> indices,
-    std::vector<S_TEXTURE> textures, 
-    unsigned int type) :CMesh(vertices, indices, type)
+    std::vector<S_TEXTURE> textures,
+    float vertexResize,
+    float textureResize,
+    unsigned int type) :CMesh(vertices, indices, vertexResize, textureResize, type)
 {
     this->m_vec_Textures = textures;
 }
 
 CMesh::~CMesh()
 {
+}
+
+void CMesh::Resize()
+{
+    // 顶点&坐标放大
+    for (size_t index = 0; index < m_vec_Vertices.size(); ++index)
+    {
+        m_vec_Vertices[index].Position.m_value *= m_VertexResize;
+        m_vec_Vertices[index].TexCoords.m_value *= m_TextureResize;
+    }
 }
 
 void CMesh::SetupMesh()

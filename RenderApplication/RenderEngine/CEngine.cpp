@@ -105,7 +105,8 @@ bool CEngine::LoadModelChess()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
-	desc.size = 10.0f;
+	desc.vertexResize = 10.0f;
+	desc.textureResize = 20.0f;
 	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(CModel::E_MODEL_CHESS, desc);
 	if (nullptr == FileModel) {
 		PRINTLOG("Fail to load Model");

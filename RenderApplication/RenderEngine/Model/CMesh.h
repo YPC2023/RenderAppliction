@@ -98,18 +98,22 @@ public:
 public:
     CMesh(std::vector<S_VERTEX> vertices,
         std::vector<unsigned int> indices,
+        float vertexResize = 1.0f,
+        float textureResize = 1.0f,
         unsigned int type = GL_TRIANGLES);
     CMesh(std::vector<S_VERTEX> vertices,
         std::vector<unsigned int> indices,
         std::vector<S_TEXTURE> textures,
+        float vertexResize = 1.0f,
+        float textureResize = 1.0f,
         unsigned int type = GL_TRIANGLES);
     ~CMesh();
 private:
+    void Resize();
     void SetupMesh();
-
 private:
-    bool                        m_bAutoRecycle;
-
+    float                       m_VertexResize;
+    float                       m_TextureResize;
 public:
     std::vector<S_VERTEX>       m_vec_Vertices;
     std::vector<unsigned int>   m_vec_Indices;
