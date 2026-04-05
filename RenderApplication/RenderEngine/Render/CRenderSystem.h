@@ -22,7 +22,15 @@ public:
 
 private:
 	static void UpdateNode(CSceneGraphManager& scene, entt::entity entity);
-	static void RenderMesh(const CRenderContext& context, const CSceneGraphManager& scene, entt::entity entity);
-	static void ActiveTexture(const CRenderContext& context, const CSceneGraphComponent::S_MESH_INFO& mesh);
-	static void SetRenderId(const CRenderContext& context, entt::entity entity);
+
+	static void RenderMesh(const CRenderContext& context, 
+		const CSceneGraphManager& scene, entt::entity entity);
+
+	static void ActiveTexture(const CRenderContext& context, 
+		std::shared_ptr<CMaterial> material, 
+		const CSceneGraphComponent::S_MESH_INFO& mesh);
+
+	static void SetRenderId(const CRenderContext& context, 
+		std::shared_ptr<CMaterial> material, 
+		entt::entity entity);
 };

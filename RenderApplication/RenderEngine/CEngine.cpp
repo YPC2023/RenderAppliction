@@ -60,7 +60,7 @@ bool CEngine::LoadModel(const char* path)
 		PRINTLOG("Fail to load Model(%s)", path);
 		return false;
 	}
-
+	
 	AppendModel(*FileModel.get());
 	return true;
 }
@@ -73,6 +73,7 @@ void CEngine::AppendModel(const CModel& model)
 		PRINTLOG("Fail to create scene model node");
 		return;
 	}
+	
 	// 添加model节点并返回引用
 	CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_MODEL_INFO>(entityModel, model.m_strPath);
 	// 给model添加transform组件
@@ -91,6 +92,11 @@ void CEngine::AppendModel(const CModel& model)
 		// 指向子节点
 		ModelRelation.children.insert(entityMesh);
 
+		std::shared_ptr<CMaterial> material = CMaterialSystem::AquireMaterial(
+			CModelLoader::TranslateMaterial(model.m_vec_mesh[indexMesh]));
+		// 添加材质节点
+		CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_MATERIAL_INFO>(entityMesh, material);
+
 		// 获取mesh节点的引用
 		CSceneGraphComponent::S_MESH_INFO& mesh = CSceneGraphManager::GetInstance().
 			AppendAttribute< CSceneGraphComponent::S_MESH_INFO>(entityMesh);
@@ -107,15 +113,6 @@ void CEngine::AppendModel(const CModel& model)
 		mesh.VBO = model.m_vec_mesh[indexMesh].m_VBO;
 		mesh.EBO = model.m_vec_mesh[indexMesh].m_EBO;
 		mesh.size = model.m_vec_mesh[indexMesh].m_vec_Indices.size();
-
-		for (size_t indexTexture = 0;
-			indexTexture < model.m_vec_mesh[indexMesh].m_vec_Textures.size(); ++indexTexture) {
-			CSceneGraphComponent::S_TEXTURE_INFO texture;
-			texture.strName = model.m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strPath;
-			texture.strType = model.m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strType;
-			texture.texture = model.m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].texture;
-			mesh.textures.push_back(texture);
-		}
 	}
 }
 
@@ -130,7 +127,7 @@ bool CEngine::CreateModelChess()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	//AppendModel(*Model.get());
 	return true;
 }
 
@@ -145,7 +142,7 @@ bool CEngine::CreateModelColumn()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	//AppendModel(*Model.get());
 	return true;
 }
 
@@ -160,7 +157,7 @@ bool CEngine::CreateModelSphere()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	//AppendModel(*Model.get());
 	return true;
 }
 
@@ -173,7 +170,7 @@ bool CEngine::CreateModelCone()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	//AppendModel(*Model.get());
 	return true;
 }
 
@@ -186,6 +183,6 @@ bool CEngine::CreateModelTorus()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	//AppendModel(*Model.get());
 	return true;
 }

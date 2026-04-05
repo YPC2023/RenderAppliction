@@ -7,15 +7,20 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../Resource/CTexture.h"
 #include "../Core/Define.h"
+#include "../Material/CMaterialSystem.h"
 
 class CSceneGraphComponent
 {
 public:
-	struct S_TEXTURE_INFO
+	/*struct S_TEXTURE_INFO
 	{
 		std::shared_ptr<CTexture>	texture;
 		std::string					strType = "";
 		std::string					strName = "";
+	};*/
+	struct S_MATERIAL_INFO
+	{
+		std::shared_ptr<CMaterial>	m_Material;
 	};
 	struct S_MESH_INFO
 	{
@@ -24,8 +29,9 @@ public:
 		HVBO		                VBO = 0;
 		HEBO		                EBO = 0;
 		size_t						size = 0;
-		std::vector<S_TEXTURE_INFO>	textures;
+		//std::vector<S_TEXTURE_INFO>	textures;
 	};
+
 	struct S_MODEL_INFO
 	{
 		std::string					strName = "";

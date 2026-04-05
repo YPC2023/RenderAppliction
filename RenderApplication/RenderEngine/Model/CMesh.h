@@ -6,75 +6,77 @@
 #include "../Resource/CTexture.h"
 #include "../Core/Define.h"
 
-class Vec2
-{
-    friend class CMesh;
-public:
-    Vec2()
-    {
-        m_enable = false;
-        m_value = glm::vec3(0.0f, 0.0f, 0.0f);
-    }
-public:
-    Vec2 operator = (glm::vec2 v)
-    {
-        m_enable = true;
-        m_value = v;
-        return *this;
-    }
-private:
-    glm::vec2   m_value;
-protected:
-    bool        m_enable;
-};
 
-class Vec3
-{
-    friend class CMesh;
-public:
-    Vec3()
-    {
-        m_enable = false;
-        m_value = glm::vec3(0.0f, 0.0f, 0.0f);
-    }
-public:
-    Vec3 operator = (glm::vec3 v)
-    {
-        m_enable = true;
-        m_value = v;
-        return *this;
-    }
-private:
-    glm::vec3   m_value;
-protected:
-    bool        m_enable;
-};
-
-class Vec4
-{
-    friend class CMesh;
-public:
-    Vec4()
-    {
-        m_enable = false;
-        m_value = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
-    }
-public:
-    Vec4 operator = (glm::vec4 v)
-    {
-        m_enable = true;
-        m_value = v;
-        return *this;
-    }
-private:
-    glm::vec4   m_value;
-protected:
-    bool        m_enable;
-};
 
 
 class CMesh
 {
+public:
+    class Vec2
+    {
+        friend class CMesh;
+    public:
+        Vec2()
+        {
+            m_enable = false;
+            m_value = glm::vec3(0.0f, 0.0f, 0.0f);
+        }
+    public:
+        Vec2 operator = (glm::vec2 v)
+        {
+            m_enable = true;
+            m_value = v;
+            return *this;
+        }
+    private:
+        glm::vec2   m_value;
+    public:
+        bool        m_enable;
+    };
+
+    class Vec3
+    {
+        friend class CMesh;
+    public:
+        Vec3()
+        {
+            m_enable = false;
+            m_value = glm::vec3(0.0f, 0.0f, 0.0f);
+        }
+    public:
+        Vec3 operator = (glm::vec3 v)
+        {
+            m_enable = true;
+            m_value = v;
+            return *this;
+        }
+    private:
+        glm::vec3   m_value;
+    public:
+        bool        m_enable;
+    };
+
+    class Vec4
+    {
+        friend class CMesh;
+    public:
+        Vec4()
+        {
+            m_enable = false;
+            m_value = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+    public:
+        Vec4 operator = (glm::vec4 v)
+        {
+            m_enable = true;
+            m_value = v;
+            return *this;
+        }
+    private:
+        glm::vec4   m_value;
+    public:
+        bool        m_enable;
+    };
 public:
     typedef struct _S_VERTEX {
         // position

@@ -17,7 +17,7 @@ public:
 		bool hasTexCoords = false;
 		bool hasTangent = false;
 		bool hasBitangent = false;
-		bool hasSelected = false;
+		bool hasSelected = true;
 		bool renderID = false;
 	}S_SHADER_DESC;
 public:

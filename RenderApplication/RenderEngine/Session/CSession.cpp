@@ -55,7 +55,7 @@ void CSession::Render()
 
 	CRenderSystem::CRenderContext context;
 	context.m_Camera = m_camera;
-	context.m_Material = m_MaterialRender;
+	//context.m_Material = m_MaterialRender;
 	context.m_SelectedId = m_SelectedId;
 	// ¸úÐÂÎ»ÖÃ
 	CRenderSystem::Update(CSceneGraphManager::GetInstance());
