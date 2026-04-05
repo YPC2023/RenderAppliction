@@ -14,5 +14,9 @@ public:
 private:
 	void AppendModel(const CModel& model);
 private:
-	bool LoadModelChess();
+	bool CreateModelChess();
+	bool CreateModelColumn();
+	bool CreateModelSphere();
+	bool CreateModelCone();
+	bool CreateModelTorus();
 };

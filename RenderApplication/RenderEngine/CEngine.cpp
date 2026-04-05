@@ -6,8 +6,26 @@
 
 bool CEngine::Initialize()
 {
-	if (!LoadModelChess()) {
+	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
+		return false;
+	}
+	/*
+	if (!CreateModelColumn()) {
+		PRINTLOG("Fail to create column model");
+		return false;
+	}
+	if (!CreateModelSphere()) {
+		PRINTLOG("Fail to create sphere model");
+		return false;
+	}
+	*/
+	if (!CreateModelCone()) {
+		PRINTLOG("Fail to create cone model");
+		return false;
+	}
+	if (!CreateModelTorus()) {
+		PRINTLOG("Fail to create torus model");
 		return false;
 	}
 	return true;
@@ -101,17 +119,73 @@ void CEngine::AppendModel(const CModel& model)
 	}
 }
 
-bool CEngine::LoadModelChess()
+bool CEngine::CreateModelChess()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
 	desc.vertexResize = 10.0f;
 	desc.textureResize = 20.0f;
-	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(CModel::E_MODEL_CHESS, desc);
-	if (nullptr == FileModel) {
+	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_CHESS, desc);
+	if (nullptr == Model) {
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*FileModel.get());
+	AppendModel(*Model.get());
+	return true;
+}
+
+bool CEngine::CreateModelColumn()
+{
+	// 从文件加载模型文件
+	CModel::S_MODEL_DESC desc;
+	desc.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
+	desc.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 5.0f, 0.0f);
+	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, desc);
+	if (nullptr == Model) {
+		PRINTLOG("Fail to load Model");
+		return false;
+	}
+	AppendModel(*Model.get());
+	return true;
+}
+
+bool CEngine::CreateModelSphere()
+{
+	// 从文件加载模型文件
+	CModel::S_MODEL_DESC desc;
+	desc.S_MODEL_SPHERE_DESC.center = glm::vec3(0.0f);
+	desc.S_MODEL_SPHERE_DESC.radius = 4.0f;
+	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_SPHERE, desc);
+	if (nullptr == Model) {
+		PRINTLOG("Fail to load Model");
+		return false;
+	}
+	AppendModel(*Model.get());
+	return true;
+}
+
+bool CEngine::CreateModelCone()
+{
+	// 从文件加载模型文件
+	CModel::S_MODEL_DESC desc;
+	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_CONE, desc);
+	if (nullptr == Model) {
+		PRINTLOG("Fail to load Model");
+		return false;
+	}
+	AppendModel(*Model.get());
+	return true;
+}
+
+bool CEngine::CreateModelTorus()
+{
+	// 从文件加载模型文件
+	CModel::S_MODEL_DESC desc;
+	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_TORUS, desc);
+	if (nullptr == Model) {
+		PRINTLOG("Fail to load Model");
+		return false;
+	}
+	AppendModel(*Model.get());
 	return true;
 }
