@@ -5,5 +5,5 @@
 class CModelLoader
 {
 public:
-	static std::shared_ptr<CModel> LoadModel(const char* path, bool bAutoRecycle = true);
+	static std::shared_ptr<CModel> LoadFileModel(const char* path, bool bAutoRecycle = true);
 };

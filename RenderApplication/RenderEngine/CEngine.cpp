@@ -39,7 +39,7 @@ void CEngine::Resize(int width, int height)
 bool CEngine::LoadModel(const char* path)
 {
 	// 从文件加载模型文件
-	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(path, false);
+	std::shared_ptr<CModel> FileModel = CModelLoader::LoadFileModel(path, false);
 	if (nullptr == FileModel) {
 		PRINTLOG("Fail to load Model(%s)", path);
 		return false;

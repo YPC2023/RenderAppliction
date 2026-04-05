@@ -6,6 +6,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "../Resource/CTexture.h"
+#include "../Core/Define.h"
 
 class CSceneGraphComponent
 {
@@ -19,9 +20,9 @@ public:
 	struct S_MESH_INFO
 	{
 		unsigned int                Type = 0;
-		unsigned int                VAO = 0;
-		unsigned int                VBO = 0;
-		unsigned int                EBO = 0;
+		HVAO						VAO = 0;
+		HVBO		                VBO = 0;
+		HEBO		                EBO = 0;
 		size_t						size = 0;
 		std::vector<S_TEXTURE_INFO>	textures;
 	};

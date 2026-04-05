@@ -4,6 +4,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include "../Resource/CTexture.h"
+#include "../Core/Define.h"
 
 class Vec2
 {
@@ -118,7 +119,7 @@ public:
 
 public:
     unsigned int                m_nType;
-    unsigned int                m_VAO;
-    unsigned int                m_VBO;
-    unsigned int                m_EBO;
+    HVAO                        m_VAO;
+    HVBO                        m_VBO;
+    HEBO                        m_EBO;
 };

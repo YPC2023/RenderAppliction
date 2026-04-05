@@ -1,8 +1,20 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "SourceHandle.h"
 
 using entity_type = std::uint32_t;
+
+using HVAO = SourceHandle<IDManager<IDManagerVAO>>;
+using HEBO = SourceHandle<IDManager<IDManagerEBO>>;
+using HVBO = SourceHandle<IDManager<IDManagerVBO>>;
+using HUBO = SourceHandle<IDManager<IDManagerUBO>>;
+using HFBO = SourceHandle<IDManager<IDManagerFBO>>;
+using HRBO = SourceHandle<IDManager<IDManagerRBO>>;
+using HTEX = SourceHandle<IDManager<IDManagerTEX>>;
+using HSHD = SourceHandle<IDManager<IDManagerSHD>>;
+using HSHDP = SourceHandle<IDManager<IDManagerSHDP>>;
+
 
 #define IDM_VIEWPORT_WIDTH   800
 #define IDM_VIEWPORT_HEIGHT  600

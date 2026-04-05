@@ -9,9 +9,6 @@ CMesh::CMesh(std::vector<S_VERTEX> vertices,
     m_nType = type;
     m_vec_Vertices = vertices;
     m_vec_Indices = indices;
-    m_VAO = 0;
-    m_VBO = 0;
-    m_EBO = 0;
     m_bAutoRecycle = bAutoRecycle;
     SetupMesh();
 }
@@ -26,18 +23,6 @@ CMesh::CMesh(std::vector<S_VERTEX> vertices,
 
 CMesh::~CMesh()
 {
-    if (m_bAutoRecycle) {
-        if (0 != m_VAO) {
-            glDeleteVertexArrays(1, &m_VAO);
-        }
-        if (0 != m_VBO) {
-            glDeleteBuffers(1, &m_VBO);
-        }
-        if (0 != m_EBO) {
-            glDeleteBuffers(1, &m_EBO);
-        }
-    }
-    
 }
 
 void CMesh::SetupMesh()
