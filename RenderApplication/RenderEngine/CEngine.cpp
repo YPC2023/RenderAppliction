@@ -10,7 +10,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to load chess model");
 		return false;
 	}
-	/*
+	
 	if (!CreateModelColumn()) {
 		PRINTLOG("Fail to create column model");
 		return false;
@@ -19,7 +19,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create sphere model");
 		return false;
 	}
-	*/
+	
 	if (!CreateModelCone()) {
 		PRINTLOG("Fail to create cone model");
 		return false;
@@ -61,7 +61,7 @@ bool CEngine::LoadModel(const char* path)
 		return false;
 	}
 	
-	AppendModel(*FileModel.get());
+	//AppendModel(*FileModel.get());
 	return true;
 }
 
@@ -127,7 +127,7 @@ bool CEngine::CreateModelChess()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	//AppendModel(*Model.get());
+	AppendModel(*Model.get());
 	return true;
 }
 
@@ -142,7 +142,7 @@ bool CEngine::CreateModelColumn()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	//AppendModel(*Model.get());
+	AppendModel(*Model.get());
 	return true;
 }
 
@@ -157,7 +157,7 @@ bool CEngine::CreateModelSphere()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	//AppendModel(*Model.get());
+	AppendModel(*Model.get());
 	return true;
 }
 
@@ -170,7 +170,7 @@ bool CEngine::CreateModelCone()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	//AppendModel(*Model.get());
+	AppendModel(*Model.get());
 	return true;
 }
 
@@ -183,6 +183,6 @@ bool CEngine::CreateModelTorus()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	//AppendModel(*Model.get());
+	AppendModel(*Model.get());
 	return true;
 }

@@ -37,7 +37,7 @@ public:
 		struct _S_MODEL_SPHERE_DESC
 		{
 			glm::vec3 center = glm::vec3(0.0f);
-			glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+			glm::vec4 color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 			float radius = 1.0f;
 			int sectors = 320;
 			int stacks = 640;

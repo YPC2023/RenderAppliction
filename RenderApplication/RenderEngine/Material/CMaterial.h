@@ -2,19 +2,29 @@
 #include <vector>
 #include <memory>
 #include "CShader.h"
-#include "../Resource/CResourceManager.h"
+#include "../Resource/CTexture.h"
 
 class CMaterial
 {
 public:
-	typedef struct _S_MATERIAL_TEXTURE
+	typedef struct _S_SHADER_TEXTURE
 	{
 		std::string					strType;
 		std::shared_ptr<CTexture>	texture;
-	}S_MATERIAL_TEXTURE;
-	typedef struct _S_MATERIAL_DESC : public CShader::S_SHADER_DESC
+		bool operator<(const _S_SHADER_TEXTURE& desc) const {
+			return (std::tie(strType, texture->GetDesc().strPath)
+				< std::tie(desc.strType, desc.texture->GetDesc().strPath));
+		}
+	}S_SHADER_TEXTURE;
+	typedef struct _S_MATERIAL_DESC : CShader::S_SHADER_DESC
 	{
-		std::vector<S_MATERIAL_TEXTURE>	textures;
+		std::vector<S_SHADER_TEXTURE> textures;
+		bool operator<(const _S_MATERIAL_DESC& desc) const {
+			return std::tie(hasMVP, hasPosition, hasColor, hasNormal, hasTexCoords, hasTangent, hasBitangent,
+				hasSelected, renderID, textures) <
+				std::tie(desc.hasMVP, desc.hasPosition, desc.hasColor, desc.hasNormal, desc.hasTexCoords,
+					desc.hasTangent, desc.hasBitangent, desc.hasSelected, desc.renderID, desc.textures);
+		}
 	}S_MATERIAL_DESC;
 public:
 	//using S_MATERIAL_DESC = CShader::S_SHADER_DESC;
