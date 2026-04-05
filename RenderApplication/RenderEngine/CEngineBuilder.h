@@ -4,6 +4,7 @@
 class ENGINE_API_ACTION CEngineBuilder
 {
 public:
-	static IEngineInterface* CreateEngineSession();
-	static void ReleaseEngineSession(IEngineInterface* session);
+	static IEngineInterface* AquireEngine();
+	static ISessionInterface* CreateEngineSession();
+	static void ReleaseEngineSession(ISessionInterface* session);
 };

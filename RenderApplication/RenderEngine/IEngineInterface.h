@@ -14,6 +14,15 @@
 class ENGINE_API_ACTION IEngineInterface
 {
 public:
+	virtual bool Initialize() = 0;
+	virtual void UnInitialize() = 0;
+	virtual bool SetLoader(GLADloadproc loader) = 0;
+	virtual bool LoadModel(const char* path) = 0;
+};
+
+class ENGINE_API_ACTION ISessionInterface
+{
+public:
 	typedef enum _E_MOUSE_ACTION_TYPE
 	{
 		E_MOUSE_ACTION_UNKOWN,
@@ -32,11 +41,9 @@ public:
 public:
 	virtual bool Initialize() = 0;
 	virtual void UnInitialize() = 0;
-	virtual bool SetLoader(GLADloadproc loader) = 0;
 	virtual void Render() = 0;
 	virtual unsigned int GetRenderTextureId() = 0;
 	virtual void Resize(int width, int height) = 0;
-	virtual bool LoadModel(const char* path) = 0;
 public:
 	virtual void OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y) = 0;
 };

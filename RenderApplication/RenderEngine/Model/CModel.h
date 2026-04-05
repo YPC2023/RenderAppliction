@@ -12,14 +12,18 @@
 class CModel
 {
 public:
-	enum class E_MODEL_TYPE
+	typedef enum _E_MODEL_TYPE
 	{
+		E_MODEL_FILE,		// 文件模型
 		E_MODEL_CHESS,		// 棋盘格
-	};
+	}E_MODEL_TYPE;
+	typedef struct _S_MODEL_DESC
+	{
+		std::string		strPath;
+		float			size;
+	}S_MODEL_DESC;
 public:
-	CModel(bool bAutoRecycle = true);
-	CModel(E_MODEL_TYPE type);
-	CModel(const std::string& strPth,bool bAutoRecycle = true);
+	CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc);
 private:
 	bool LoadModel(const std::string& path);
 	bool ProcessNode(aiNode* node, const aiScene* scene);
@@ -27,9 +31,12 @@ private:
 	std::vector<CMesh::S_TEXTURE> LoadMaterialTextures(aiMaterial* mat,
 		aiTextureType type, std::string typeName);
 private:
+	bool InitializeRectangle(float size);
 	bool InitializeChess();
 private:
 	bool					m_ok;
+	S_MODEL_DESC			m_desc;
+private:
 	std::string				m_strRootPath;
 	bool					m_bAutoRecycle;
 public:

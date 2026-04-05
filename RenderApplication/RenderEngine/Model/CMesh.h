@@ -98,12 +98,10 @@ public:
 public:
     CMesh(std::vector<S_VERTEX> vertices,
         std::vector<unsigned int> indices,
-        bool bAutoRecycle = true, // 自动回收显存资源
         unsigned int type = GL_TRIANGLES);
     CMesh(std::vector<S_VERTEX> vertices,
         std::vector<unsigned int> indices,
         std::vector<S_TEXTURE> textures,
-        bool bAutoRecycle = true, // 自动回收显存资源
         unsigned int type = GL_TRIANGLES);
     ~CMesh();
 private:

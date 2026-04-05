@@ -1,20 +1,17 @@
 #include "CModel.h"
 #include <CUtils.h>
 
-CModel::CModel(bool bAutoRecycle)
+CModel::CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc)
 {
-    m_bAutoRecycle = bAutoRecycle;
-}
-
-CModel::CModel(E_MODEL_TYPE type)
-{
-
-}
-
-CModel::CModel(const std::string& strPath, bool bAutoRecycle) : CModel(bAutoRecycle)
-{
-    m_strPath = strPath;
-    m_ok = LoadModel(strPath);
+    m_desc = desc;
+    switch (type) {
+    case E_MODEL_FILE:
+        m_ok = LoadModel(m_desc.strPath);
+        break;
+    case E_MODEL_CHESS:
+        m_ok = InitializeChess();
+        break;
+    }
 }
 
 bool CModel::LoadModel(const std::string& strPath)
@@ -130,7 +127,7 @@ CMesh CModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
-    return CMesh(vertices, indices, textures, m_bAutoRecycle);
+    return CMesh(vertices, indices, textures);
 }
 
 std::vector<CMesh::S_TEXTURE> CModel::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
@@ -156,7 +153,54 @@ std::vector<CMesh::S_TEXTURE> CModel::LoadMaterialTextures(aiMaterial* mat, aiTe
     return textures;
 }
 
+bool CModel::InitializeRectangle(float size)
+{
+    std::vector<CMesh::S_VERTEX>	vertices;
+    std::vector<unsigned int>	indices = {
+        0, 1, 2,
+        2, 3, 0
+    };
+    CMesh::S_VERTEX	LeftTop, RightTop, RightBottom, LeftBottom;
+    LeftTop.Position = glm::vec3(-1.0f, 0.0f, -1.0f);
+    LeftTop.TexCoords = glm::vec2(0.0f, size);
+
+    RightTop.Position = glm::vec3(1.0f, 0.0f, -1.0f);
+    RightTop.TexCoords = glm::vec2(size, size);
+
+    RightBottom.Position = glm::vec3(1.0f, 0.0f, 1.0f);
+    RightBottom.TexCoords = glm::vec2(size, 0.0f);
+
+    LeftBottom.Position = glm::vec3(-1.0f, 0.0f, 1.0f);
+    LeftBottom.TexCoords = glm::vec2(0.0f, 0.0f);
+
+    vertices.push_back(LeftTop);
+    vertices.push_back(RightTop);
+    vertices.push_back(RightBottom);
+    vertices.push_back(LeftBottom);
+
+    m_vec_mesh.push_back(CMesh(vertices, indices));
+    return true;
+}
+
 bool CModel::InitializeChess()
 {
+    if (!InitializeRectangle(m_desc.size)) {
+        return false;
+    }
+    std::vector<CMesh::S_TEXTURE>	textures;
+
+    CMesh::S_TEXTURE texture;
+    texture.strPath = CUtils::GetImagePathFile("chess.jpg");
+    texture.strType = "texture_diffuse";
+
+    CTexture::S_TEXTURE_DESC desc;
+    desc.strPath = texture.strPath;
+    texture.texture = CResourceManager::AquireTexture(desc);
+    if (0 == texture.texture) {
+        PRINTLOG("Fail to create chess texture");
+        return false;
+    }
+    textures.push_back(texture);
+    m_vec_mesh[0].m_vec_Textures = textures;
     return true;
 }

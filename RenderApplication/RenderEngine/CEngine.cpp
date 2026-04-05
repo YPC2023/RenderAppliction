@@ -6,6 +6,10 @@
 
 bool CEngine::Initialize()
 {
+	if (!LoadModelChess()) {
+		PRINTLOG("Fail to load chess model");
+		return false;
+	}
 	return true;
 }
 
@@ -15,55 +19,56 @@ void CEngine::UnInitialize()
 
 bool CEngine::SetLoader(GLADloadproc loader)
 {
-	loader = loader;
+	if (0 == loader) {
+		PRINTLOG("Set glfwGetProcAddress first please");
+		return false;
+	}
+	if (!gladLoadGLLoader((GLADloadproc)loader))
+	{
+		PRINTLOG("Failed to initialize GLAD");
+		return false;
+	}
 	return true;
-}
-
-void CEngine::Render()
-{
-	
-}
-
-unsigned int CEngine::GetRenderTextureId()
-{
-	return 0;
-}
-
-
-void CEngine::Resize(int width, int height)
-{
-
 }
 
 
 bool CEngine::LoadModel(const char* path)
 {
 	// 从文件加载模型文件
-	std::shared_ptr<CModel> FileModel = CModelLoader::LoadFileModel(path, false);
+	CModel::S_MODEL_DESC desc;
+	desc.strPath = path;
+	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(CModel::E_MODEL_FILE, desc);
 	if (nullptr == FileModel) {
 		PRINTLOG("Fail to load Model(%s)", path);
 		return false;
 	}
+
+	AppendModel(*FileModel.get());
+	return true;
+}
+
+void CEngine::AppendModel(const CModel& model)
+{
 	// 创建model节点
 	entt::entity entityModel = CSceneGraphManager::GetInstance().CreateNode();
 	if (entt::null == entityModel) {
 		PRINTLOG("Fail to create scene model node");
-		return false;
+		return;
 	}
 	// 添加model节点并返回引用
-	CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_MODEL_INFO>(entityModel, FileModel->m_strPath);
+	CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_MODEL_INFO>(entityModel, model.m_strPath);
 	// 给model添加transform组件
-	CSceneGraphManager::GetInstance(). AppendAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(entityModel);
+	CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(entityModel);
 	// 给model添加relation组件
 	CSceneGraphComponent::S_RELATION_INFO& ModelRelation = CSceneGraphManager::GetInstance().
 		AppendAttribute<CSceneGraphComponent::S_RELATION_INFO>(entityModel);
 
-	for (size_t indexMesh = 0; indexMesh < FileModel->m_vec_mesh.size(); ++indexMesh) {
+	for (size_t indexMesh = 0; indexMesh < model.m_vec_mesh.size(); ++indexMesh) {
 		// 创建mesh节点
 		entt::entity entityMesh = CSceneGraphManager::GetInstance().CreateNode();
 		if (entt::null == entityMesh) {
 			PRINTLOG("Fail to create scene mesh node");
-			return false;
+			return ;
 		}
 		// 指向子节点
 		ModelRelation.children.insert(entityMesh);
@@ -79,25 +84,33 @@ bool CEngine::LoadModel(const char* path)
 		// 指向父节点
 		ModelRelation.parent = entityModel;
 
-		mesh.Type = FileModel->m_vec_mesh[indexMesh].m_nType;
-		mesh.VAO = FileModel->m_vec_mesh[indexMesh].m_VAO;
-		mesh.VBO = FileModel->m_vec_mesh[indexMesh].m_VBO;
-		mesh.EBO = FileModel->m_vec_mesh[indexMesh].m_EBO;
-		mesh.size = FileModel->m_vec_mesh[indexMesh].m_vec_Indices.size();
+		mesh.Type = model.m_vec_mesh[indexMesh].m_nType;
+		mesh.VAO = model.m_vec_mesh[indexMesh].m_VAO;
+		mesh.VBO = model.m_vec_mesh[indexMesh].m_VBO;
+		mesh.EBO = model.m_vec_mesh[indexMesh].m_EBO;
+		mesh.size = model.m_vec_mesh[indexMesh].m_vec_Indices.size();
 
-		for (size_t indexTexture = 0; 
-			indexTexture < FileModel->m_vec_mesh[indexMesh].m_vec_Textures.size(); ++indexTexture) {
+		for (size_t indexTexture = 0;
+			indexTexture < model.m_vec_mesh[indexMesh].m_vec_Textures.size(); ++indexTexture) {
 			CSceneGraphComponent::S_TEXTURE_INFO texture;
-			texture.strName = FileModel->m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strPath;
-			texture.strType = FileModel->m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strType;
-			texture.texture = FileModel->m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].texture;
+			texture.strName = model.m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strPath;
+			texture.strType = model.m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strType;
+			texture.texture = model.m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].texture;
 			mesh.textures.push_back(texture);
 		}
 	}
-	return true;
 }
 
-void CEngine::OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y)
+bool CEngine::LoadModelChess()
 {
-
+	// 从文件加载模型文件
+	CModel::S_MODEL_DESC desc;
+	desc.size = 10.0f;
+	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(CModel::E_MODEL_CHESS, desc);
+	if (nullptr == FileModel) {
+		PRINTLOG("Fail to load Model");
+		return false;
+	}
+	AppendModel(*FileModel.get());
+	return true;
 }

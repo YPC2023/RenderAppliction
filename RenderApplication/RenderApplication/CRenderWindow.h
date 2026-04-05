@@ -19,9 +19,9 @@ public:
 	void OnKeyboardAction(unsigned int key, const char* name, bool down) override;
 private:
 	ImVec2	GetRelativePosition(const ImVec2& point);
-	IEngineInterface::E_MOUSE_BUTTON_TYPE TranslateImguiButtonToEngine(E_MOUSE_BUTTON_TYPE key);
-	IEngineInterface::E_MOUSE_ACTION_TYPE TranslateImguiActionToEngine(E_MOUSE_ACTION_TYPE action);
+	ISessionInterface::E_MOUSE_BUTTON_TYPE TranslateImguiButtonToEngine(E_MOUSE_BUTTON_TYPE key);
+	ISessionInterface::E_MOUSE_ACTION_TYPE TranslateImguiActionToEngine(E_MOUSE_ACTION_TYPE action);
 private:
-	IEngineInterface* m_pEngineInterface;
+	ISessionInterface* m_pISessionInterface;
 };
 

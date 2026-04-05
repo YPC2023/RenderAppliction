@@ -5,20 +5,17 @@
 
 CRenderWindow::CRenderWindow(const std::string& strName): CWindow(strName)
 {
-	m_pEngineInterface = nullptr;
+	m_pISessionInterface = nullptr;
 }
 
 bool CRenderWindow::Initialize()
 {
-	m_pEngineInterface = CEngineBuilder::CreateEngineSession();
-	if (nullptr == m_pEngineInterface) {
+	m_pISessionInterface = CEngineBuilder::CreateEngineSession();
+	if (nullptr == m_pISessionInterface) {
 		PRINTLOG("Fail to create engine session");
 		return false;
 	}
-	if (!m_pEngineInterface->SetLoader((GLADloadproc)glfwGetProcAddress)) {
-		PRINTLOG("Fail to initialize GLAD");
-	}
-	if (!m_pEngineInterface->Initialize()) {
+	if (!m_pISessionInterface->Initialize()) {
 		PRINTLOG("Fail to initialize Engine");
 		return false;
 	}
@@ -27,18 +24,18 @@ bool CRenderWindow::Initialize()
 
 void CRenderWindow::UnInitialize()
 {
-	if (nullptr != m_pEngineInterface) {
-		m_pEngineInterface->UnInitialize();
+	if (nullptr != m_pISessionInterface) {
+		m_pISessionInterface->UnInitialize();
 	}
 }
 
 void CRenderWindow::OnRender()
 {
-	if (nullptr == m_pEngineInterface) {
+	if (nullptr == m_pISessionInterface) {
 		return;
 	}
-	m_pEngineInterface->Render();
-	ImTextureID texID = (ImTextureID)m_pEngineInterface->GetRenderTextureId();
+	m_pISessionInterface->Render();
+	ImTextureID texID = (ImTextureID)m_pISessionInterface->GetRenderTextureId();
 	if (0 == texID) {
 		return;
 	}
@@ -49,24 +46,24 @@ void CRenderWindow::OnRender()
 
 void CRenderWindow::OnSize(int x, int y)
 {
-	if (nullptr != m_pEngineInterface) {
+	if (nullptr != m_pISessionInterface) {
 		//PRINTLOG("%s(%d,%d)",m_strName.c_str(), x, y);
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-		m_pEngineInterface->Resize((int)viewportSize.x, (int)viewportSize.y);
+		m_pISessionInterface->Resize((int)viewportSize.x, (int)viewportSize.y);
 	}
 }
 
 void CRenderWindow::OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y)
 {
-	if (nullptr != m_pEngineInterface) 
+	if (nullptr != m_pISessionInterface)
 	{
 		if (E_MOUSE_ACTION_WHEEL == action) {
-			m_pEngineInterface->OnMouseAction(TranslateImguiButtonToEngine(key), 
+			m_pISessionInterface->OnMouseAction(TranslateImguiButtonToEngine(key),
 				TranslateImguiActionToEngine(action), x, y);
 		}
 		else {
 			ImVec2 relativePos = GetRelativePosition(ImGui::GetIO().MousePos);
-			m_pEngineInterface->OnMouseAction(TranslateImguiButtonToEngine(key),
+			m_pISessionInterface->OnMouseAction(TranslateImguiButtonToEngine(key),
 				TranslateImguiActionToEngine(action), (int)relativePos.x, (int)relativePos.y);
 		}
 	}
@@ -87,30 +84,30 @@ ImVec2	CRenderWindow::GetRelativePosition(const ImVec2& point)
 	return ImVec2(point.x - vMin.x, point.y - vMin.y);
 }
 
-IEngineInterface::E_MOUSE_BUTTON_TYPE CRenderWindow::TranslateImguiButtonToEngine(E_MOUSE_BUTTON_TYPE key)
+ISessionInterface::E_MOUSE_BUTTON_TYPE CRenderWindow::TranslateImguiButtonToEngine(E_MOUSE_BUTTON_TYPE key)
 {
 	switch (key) {
 	case E_MOUSE_BUTTON_LEFT:
-		return IEngineInterface::E_MOUSE_BUTTON_LEFT;
+		return ISessionInterface::E_MOUSE_BUTTON_LEFT;
 	case E_MOUSE_BUTTON_RIGHT:
-		return IEngineInterface::E_MOUSE_BUTTON_RIGHT;
+		return ISessionInterface::E_MOUSE_BUTTON_RIGHT;
 	case E_MOUSE_BUTTON_MIDDLE:
-		return IEngineInterface::E_MOUSE_BUTTON_MIDDLE;
+		return ISessionInterface::E_MOUSE_BUTTON_MIDDLE;
 	}
-	return IEngineInterface::E_MOUSE_BUTTON_UNKOWN;
+	return ISessionInterface::E_MOUSE_BUTTON_UNKOWN;
 }
 
-IEngineInterface::E_MOUSE_ACTION_TYPE CRenderWindow::TranslateImguiActionToEngine(E_MOUSE_ACTION_TYPE action)
+ISessionInterface::E_MOUSE_ACTION_TYPE CRenderWindow::TranslateImguiActionToEngine(E_MOUSE_ACTION_TYPE action)
 {
 	switch (action) {
 	case E_MOUSE_ACTION_PRESS:
-		return IEngineInterface::E_MOUSE_ACTION_PRESS;
+		return ISessionInterface::E_MOUSE_ACTION_PRESS;
 	case E_MOUSE_ACTION_RELEASE:
-		return IEngineInterface::E_MOUSE_ACTION_RELEASE;
+		return ISessionInterface::E_MOUSE_ACTION_RELEASE;
 	case E_MOUSE_ACTION_MOVING:
-		return IEngineInterface::E_MOUSE_ACTION_MOVING;
+		return ISessionInterface::E_MOUSE_ACTION_MOVING;
 	case E_MOUSE_ACTION_WHEEL:
-		return IEngineInterface::E_MOUSE_ACTION_WHEEL;
+		return ISessionInterface::E_MOUSE_ACTION_WHEEL;
 	}
-	return IEngineInterface::E_MOUSE_ACTION_UNKOWN;
+	return ISessionInterface::E_MOUSE_ACTION_UNKOWN;
 }

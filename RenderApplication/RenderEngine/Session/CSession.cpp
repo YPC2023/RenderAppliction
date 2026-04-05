@@ -27,26 +27,14 @@ bool CSession::Initialize()
 		PRINTLOG("Fail to initialize Material");
 		return false;
 	}
-	return CEngine::GetInstance().Initialize();
+	// 改为在DllMain里初始化
+	//return CEngine::GetInstance().Initialize();
+	return true;
 }
 
 void CSession::UnInitialize()
 {
 	CSessionManager::SwitchCurrentSession(this);
-}
-
-bool CSession::SetLoader(GLADloadproc loader)
-{
-	if (0 == loader) {
-		PRINTLOG("Set glfwGetProcAddress first please");
-		return false;
-	}
-	if (!gladLoadGLLoader((GLADloadproc)loader))
-	{
-		PRINTLOG("Failed to initialize GLAD");
-		return false;
-	}
-	return true;
 }
 
 void CSession::Render()
@@ -88,7 +76,6 @@ unsigned int CSession::GetRenderTextureId()
 void CSession::Resize(int width, int height)
 {
 	CSessionManager::SwitchCurrentSession(this);
-	CEngine::GetInstance().Resize(width, height);
 	if (nullptr != m_Framebuffer) {
 		m_Framebuffer->Resize(width, height);
 	}
@@ -97,16 +84,9 @@ void CSession::Resize(int width, int height)
 	}
 }
 
-bool CSession::LoadModel(const char* path)
-{
-	CSessionManager::SwitchCurrentSession(this);
-	return CEngine::GetInstance().LoadModel(path);
-}
-
 void CSession::OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y)
 {
 	CSessionManager::SwitchCurrentSession(this);
-	CEngine::GetInstance().OnMouseAction(key, action, x, y);
 	switch (key) {
 	case E_MOUSE_BUTTON_LEFT:
 		if (E_MOUSE_ACTION_PRESS == action) {

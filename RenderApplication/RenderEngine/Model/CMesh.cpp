@@ -4,19 +4,18 @@
 
 CMesh::CMesh(std::vector<S_VERTEX> vertices,
     std::vector<unsigned int> indices,
-    bool bAutoRecycle, unsigned int type)
+    unsigned int type)
 {
     m_nType = type;
     m_vec_Vertices = vertices;
     m_vec_Indices = indices;
-    m_bAutoRecycle = bAutoRecycle;
     SetupMesh();
 }
 
 CMesh::CMesh(std::vector<S_VERTEX> vertices,
     std::vector<unsigned int> indices,
     std::vector<S_TEXTURE> textures, 
-    bool bAutoRecycle, unsigned int type) :CMesh(vertices, indices, bAutoRecycle, type)
+    unsigned int type) :CMesh(vertices, indices, type)
 {
     this->m_vec_Textures = textures;
 }

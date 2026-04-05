@@ -21,12 +21,12 @@ bool CApplicationWindow::Initialize()
 		PRINTLOG("Fail to initialize GLAD");
 		return false;
 	}
-	if (!InitializeWindow()) {
-		PRINTLOG("Fail to initialize Windows");
-		return false;
-	}
 	if (!InitializeEngine()) {
 		PRINTLOG("Fail to initiailize Engine");
+		return false;
+	}
+	if (!InitializeWindow()) {
+		PRINTLOG("Fail to initialize Windows");
 		return false;
 	}
 	return true;
@@ -34,13 +34,23 @@ bool CApplicationWindow::Initialize()
 
 void CApplicationWindow::UnInitialize()
 {
-	
+	if (nullptr != m_pIEngineInterface) {
+		m_pIEngineInterface->UnInitialize();
+	}
 }
 
 bool CApplicationWindow::InitializeEngine()
 {
-	m_pIEngineInterface = CEngineBuilder::CreateEngineSession();
+	m_pIEngineInterface = CEngineBuilder::AquireEngine();
 	if (nullptr == m_pIEngineInterface) {
+		PRINTLOG("Fail to initialize Engine");
+		return false;
+	}
+	if (!m_pIEngineInterface->SetLoader((GLADloadproc)glfwGetProcAddress)) {
+		PRINTLOG("Fail to initialize GLAD");
+		return false;
+	}
+	if (!m_pIEngineInterface->Initialize()) {
 		PRINTLOG("Fail to initialize Engine");
 		return false;
 	}
