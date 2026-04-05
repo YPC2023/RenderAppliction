@@ -79,18 +79,18 @@ bool CEngine::LoadModel(const char* path)
 		// 指向父节点
 		ModelRelation.parent = entityModel;
 
-		mesh.Type = FileModel->m_vec_mesh[indexMesh]->m_nType;
-		mesh.VAO = FileModel->m_vec_mesh[indexMesh]->m_VAO;
-		mesh.VBO = FileModel->m_vec_mesh[indexMesh]->m_VBO;
-		mesh.EBO = FileModel->m_vec_mesh[indexMesh]->m_EBO;
-		mesh.size = FileModel->m_vec_mesh[indexMesh]->m_vec_Indices.size();
+		mesh.Type = FileModel->m_vec_mesh[indexMesh].m_nType;
+		mesh.VAO = FileModel->m_vec_mesh[indexMesh].m_VAO;
+		mesh.VBO = FileModel->m_vec_mesh[indexMesh].m_VBO;
+		mesh.EBO = FileModel->m_vec_mesh[indexMesh].m_EBO;
+		mesh.size = FileModel->m_vec_mesh[indexMesh].m_vec_Indices.size();
 
 		for (size_t indexTexture = 0; 
-			indexTexture < FileModel->m_vec_mesh[indexMesh]->m_vec_Textures.size(); ++indexTexture) {
+			indexTexture < FileModel->m_vec_mesh[indexMesh].m_vec_Textures.size(); ++indexTexture) {
 			CSceneGraphComponent::S_TEXTURE_INFO texture;
-			texture.strName = FileModel->m_vec_mesh[indexMesh]->m_vec_Textures[indexTexture].strPath;
-			texture.strType = FileModel->m_vec_mesh[indexMesh]->m_vec_Textures[indexTexture].strType;
-			texture.texture = FileModel->m_vec_mesh[indexMesh]->m_vec_Textures[indexTexture].texture;
+			texture.strName = FileModel->m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strPath;
+			texture.strType = FileModel->m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].strType;
+			texture.texture = FileModel->m_vec_mesh[indexMesh].m_vec_Textures[indexTexture].texture;
 			mesh.textures.push_back(texture);
 		}
 	}

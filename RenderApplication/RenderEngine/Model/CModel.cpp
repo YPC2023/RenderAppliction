@@ -6,6 +6,11 @@ CModel::CModel(bool bAutoRecycle)
     m_bAutoRecycle = bAutoRecycle;
 }
 
+CModel::CModel(E_MODEL_TYPE type)
+{
+
+}
+
 CModel::CModel(const std::string& strPath, bool bAutoRecycle) : CModel(bAutoRecycle)
 {
     m_strPath = strPath;
@@ -39,11 +44,7 @@ bool CModel::ProcessNode(aiNode* node, const aiScene* scene)
         // the node object only contains indices to index the actual objects in the scene. 
         // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
         aiMesh* pMesh = scene->mMeshes[node->mMeshes[i]];
-        std::shared_ptr<CMesh> mesh = ProcessMesh(pMesh, scene);
-        if (nullptr == mesh) {
-            return false;
-        }
-        m_vec_mesh.push_back(mesh);
+        m_vec_mesh.push_back(ProcessMesh(pMesh, scene));
     }
     // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -55,7 +56,7 @@ bool CModel::ProcessNode(aiNode* node, const aiScene* scene)
     return true;
 }
 
-std::shared_ptr<CMesh> CModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+CMesh CModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
 {
     // data to fill
     std::vector<CMesh::S_VERTEX>    vertices;
@@ -129,7 +130,7 @@ std::shared_ptr<CMesh> CModel::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // return a mesh object created from the extracted mesh data
-    return std::make_shared<CMesh>(vertices, indices, textures, m_bAutoRecycle);
+    return CMesh(vertices, indices, textures, m_bAutoRecycle);
 }
 
 std::vector<CMesh::S_TEXTURE> CModel::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
@@ -153,4 +154,9 @@ std::vector<CMesh::S_TEXTURE> CModel::LoadMaterialTextures(aiMaterial* mat, aiTe
         }
     }
     return textures;
+}
+
+bool CModel::InitializeChess()
+{
+    return true;
 }
