@@ -114,10 +114,10 @@ void CEngine::AppendModel(const CModel& model)
 		// 给mesh添加transform组件
 		CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(entityMesh);
 		// 给mesh添加relation组件
-		CSceneGraphComponent::S_RELATION_INFO& ModelRelation = CSceneGraphManager::GetInstance().
+		CSceneGraphComponent::S_RELATION_INFO& MeshRelation = CSceneGraphManager::GetInstance().
 			AppendAttribute<CSceneGraphComponent::S_RELATION_INFO>(entityMesh);
 		// 指向父节点
-		ModelRelation.parent = entityModel;
+		MeshRelation.parent = entityModel;
 
 		mesh.Type = model.m_vec_mesh[indexMesh].m_nType;
 		mesh.VAO = model.m_vec_mesh[indexMesh].m_VAO;

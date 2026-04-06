@@ -64,6 +64,7 @@ void CSession::Render()
 	//context.m_Material = m_MaterialRender;
 	context.m_set_SelectedId = m_set_SelectedId;
 	// 跟新位置
+	CRenderSystem::Initialize(context, CSceneGraphManager::GetInstance());
 	CRenderSystem::Update(CSceneGraphManager::GetInstance());
 	CRenderSystem::Render(context, CSceneGraphManager::GetInstance());
 
@@ -262,6 +263,7 @@ void CSession::OnModelSelectedAction(int x, int y)
 		context.m_Material = m_MaterialSelect;
 		context.m_RenderID = true;
 		// 跟新位置
+		CRenderSystem::Initialize(context, CSceneGraphManager::GetInstance());
 		CRenderSystem::Update(CSceneGraphManager::GetInstance());
 		CRenderSystem::Render(context, CSceneGraphManager::GetInstance());
 

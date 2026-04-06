@@ -54,6 +54,7 @@ public:
 	{
 		entt::entity			parent = entt::null;
 		std::set<entt::entity>	children;
+		entt::entity			root = entt::null;
 	};
 
 };
