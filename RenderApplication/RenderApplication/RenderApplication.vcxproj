@@ -157,6 +157,7 @@
     <ClCompile Include="..\public\CUtils.cpp" />
     <ClCompile Include="CApplicationWindow.cpp" />
     <ClCompile Include="CRenderWindow.cpp" />
+    <ClCompile Include="CRightWindow.cpp" />
     <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="CWindowManager.cpp" />
     <ClCompile Include="RenderApplication.cpp" />
@@ -177,6 +178,7 @@
     <ClInclude Include="..\public\ISingletonInterface.h" />
     <ClInclude Include="CApplicationWindow.h" />
     <ClInclude Include="CRenderWindow.h" />
+    <ClInclude Include="CRightWindow.h" />
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="CWindowManager.h" />
     <ClInclude Include="IWindowInterface.h" />

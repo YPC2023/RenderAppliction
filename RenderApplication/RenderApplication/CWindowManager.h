@@ -15,6 +15,7 @@ public:
 	{
 		E_WINDOW_NORMAL,
 		E_WINDOW_RENDER,
+		E_WINDOW_PROPERTY, // ”“±ﬂµƒ Ù–‘¥∞ÃÂ
 	}E_WINDOW_TYPE;
 public:
 	CWindow* CreateWindow2(const std::string& strName, E_WINDOW_TYPE type = E_WINDOW_NORMAL);

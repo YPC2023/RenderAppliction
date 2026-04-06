@@ -131,7 +131,7 @@ bool CApplicationWindow::InitializeWindow()
 		return false;
 	}
 
-	m_pWindowRight = CWindowManager::GetInstance().CreateWindow2("Right");
+	m_pWindowRight = CWindowManager::GetInstance().CreateWindow2("Property", CWindowManager::E_WINDOW_PROPERTY);
 	if (0 == m_pWindowRight) {
 		PRINTLOG("Fail to create [%s] Window", m_pWindowRight->GetName().c_str());
 		return false;
