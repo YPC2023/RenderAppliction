@@ -1,5 +1,5 @@
 #pragma once
-
+#include <set>
 #include <memory>
 #include <entt/entt.hpp>
 #include "../SceneGraph/Camera.h"
@@ -76,7 +76,7 @@ private:
 	std::shared_ptr<CFramebuffer>	m_Framebuffer;
 	std::shared_ptr<CMaterial>		m_MaterialRender;
 	std::shared_ptr<CMaterial>		m_MaterialSelect;
-	entt::entity					m_SelectedId;
+	std::set<entt::entity>			m_set_SelectedId;
 
 
 	bool							m_bLeftMouseMoved;

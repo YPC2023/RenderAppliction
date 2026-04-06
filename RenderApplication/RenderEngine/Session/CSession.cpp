@@ -6,7 +6,6 @@
 
 CSession::CSession()
 {
-	m_SelectedId = entt::null;
 	m_OperatorAction = E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_MOVING;
 	m_bLeftMouseMoved = false;
 	m_AxisTransform = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -60,11 +59,10 @@ void CSession::Render()
 		ubo->SendData(&m_camera->GetView(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, view));
 	}
 	
-
 	CRenderSystem::CRenderContext context;
 	context.m_Camera = m_camera;
 	//context.m_Material = m_MaterialRender;
-	context.m_SelectedId = m_SelectedId;
+	context.m_set_SelectedId = m_set_SelectedId;
 	// 跟新位置
 	CRenderSystem::Update(CSceneGraphManager::GetInstance());
 	CRenderSystem::Render(context, CSceneGraphManager::GetInstance());
@@ -241,6 +239,13 @@ void CSession::OnModelSelectedAction(int x, int y)
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		// 通过UBO设置投影矩阵和视图矩阵
+		std::shared_ptr<CUniformBuffer> ubo = CResourceManager::AquireUnifrombuffer(UBO_BINDINGPOINT_MVP);
+		if (nullptr != ubo) {
+			ubo->SendData(&m_camera->GetProjection(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, projection));
+			ubo->SendData(&m_camera->GetView(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, view));
+		}
+
 		CRenderSystem::CRenderContext context;
 		context.m_Camera = m_camera;
 		context.m_Material = m_MaterialSelect;
@@ -256,22 +261,27 @@ void CSession::OnModelSelectedAction(int x, int y)
 			1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &nSelectedId);
 
 		//PRINTLOG("nSelectedId=%u[%d,%d]", nSelectedId, x, m_camera->GetWidth());
-
-		m_SelectedId = (entt::entity)nSelectedId;
+		if (CSceneGraphManager::GetInstance().EntityIsValid((entt::entity)nSelectedId)) {
+			m_set_SelectedId.insert((entt::entity)nSelectedId);
+		}
+		else {
+			m_set_SelectedId.clear();
+		}
 		m_Framebuffer->UnBind();
 	}
 }
 
 void CSession::OnModelTranslateActionBegin(int x, int y)
 {
-	if (entt::null == m_SelectedId) {
+	if (1 != m_set_SelectedId.size()) {
 		return;
 	}
-	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId)) {
+	entt::entity pickedId = *m_set_SelectedId.begin();
+	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId)) {
 		return;
 	}
 	CSceneGraphComponent::S_TRANSFORM_INFO& Transform = CSceneGraphManager::GetInstance()
-		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId);
+		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId);
 
 	m_ModelPosition = Transform.translation;
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
@@ -284,14 +294,15 @@ void CSession::OnModelTranslateActionEnd(int x, int y)
 
 void CSession::OnModelTranslateActionIng(int x, int y)
 {
-	if (entt::null == m_SelectedId) {
+	if (1 != m_set_SelectedId.size()) {
 		return;
 	}
-	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId)) {
+	entt::entity pickedId = *m_set_SelectedId.begin();
+	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId)) {
 		return;
 	}
 	CSceneGraphComponent::S_TRANSFORM_INFO& Transform = CSceneGraphManager::GetInstance()
-		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId);
+		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId);
 
 	m_bLeftMouseMoved = true;
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
@@ -301,14 +312,15 @@ void CSession::OnModelTranslateActionIng(int x, int y)
 
 void CSession::OnModelRotateActionBegin(int x, int y)
 {
-	if (entt::null == m_SelectedId) {
+	if (1 != m_set_SelectedId.size()) {
 		return;
 	}
-	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId)) {
+	entt::entity pickedId = *m_set_SelectedId.begin();
+	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId)) {
 		return;
 	}
 	CSceneGraphComponent::S_TRANSFORM_INFO& Transform = CSceneGraphManager::GetInstance()
-		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId);
+		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId);
 
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	glm::vec3 intersection;
@@ -327,14 +339,15 @@ void CSession::OnModelRotateActionEnd(int x, int y)
 
 void CSession::OnModelRotateActionIng(int x, int y)
 {
-	if (entt::null == m_SelectedId) {
+	if (1 != m_set_SelectedId.size()) {
 		return;
 	}
-	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId)) {
+	entt::entity pickedId = *m_set_SelectedId.begin();
+	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId)) {
 		return;
 	}
 	CSceneGraphComponent::S_TRANSFORM_INFO& Transform = CSceneGraphManager::GetInstance()
-		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId);
+		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId);
 
 	// 1. 获取当前射线
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
@@ -355,23 +368,24 @@ void CSession::OnModelRotateActionIng(int x, int y)
 
 void CSession::OnMouseWheel(float delta)
 {
-	if (entt::null == m_SelectedId) {
+	if (1 != m_set_SelectedId.size()) {
 		return;
 	}
-	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId)) {
+	entt::entity pickedId = *m_set_SelectedId.begin();
+	if (!CSceneGraphManager::GetInstance().HaveAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId)) {
 		return;
 	}
 	// 前滚放大(delta>0)，后滚缩小(delta<0)
 	float scaleDelta = delta * 0.1f;
 	CSceneGraphComponent::S_TRANSFORM_INFO& Transform = CSceneGraphManager::GetInstance()
-		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(m_SelectedId);
+		.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(pickedId);
 
 	glm::vec3 currentScale = Transform.scale;
 	float newScale = currentScale.x + scaleDelta;
 	if (newScale < 0.1f) newScale = 0.1f;
 	if (newScale > 10.0f) newScale = 10.0f;
 	Transform.scale = glm::vec3(newScale, newScale, newScale);
-	PRINTLOG("%u[%f,%f,%f]", m_SelectedId, Transform.scale.x, Transform.scale.y, Transform.scale.z);
+	PRINTLOG("%u[%f,%f,%f]", pickedId, Transform.scale.x, Transform.scale.y, Transform.scale.z);
 }
 
 void CSession::OnMouseLeftPress(int x, int y)

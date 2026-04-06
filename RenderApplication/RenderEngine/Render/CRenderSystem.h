@@ -13,7 +13,7 @@ public:
 	{
 		std::shared_ptr<CMaterial>	m_Material = nullptr;
 		std::shared_ptr<Camera>		m_Camera = nullptr;
-		entt::entity				m_SelectedId = entt::null;
+		std::set<entt::entity>		m_set_SelectedId;
 		bool						m_RenderID = false;
 	};
 public:

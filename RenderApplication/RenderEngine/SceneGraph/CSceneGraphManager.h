@@ -34,6 +34,10 @@ public:
 	{
 		return m_Registry.view<Type...>();
 	}
+	bool EntityIsValid(entt::entity entity)
+	{
+		return m_Registry.valid(entity);
+	}
 
 private:
 	entt::registry	m_Registry;

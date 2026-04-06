@@ -85,7 +85,7 @@ void CRenderSystem::RenderMesh(const CRenderContext& context,
 	
 	// 渲染选中高光
 	if (material->GetDesc().hasSelected) {
-		material->m_shader->setBool("selectedID", entity == context.m_SelectedId);
+		material->m_shader->setBool("selectedID", 0 < context.m_set_SelectedId.count(entity));
 	}
 
 	// 渲染拾取纹理图
