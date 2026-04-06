@@ -24,8 +24,20 @@ out vec3 Bitangent;
 
 ## if hasMVP | default(false)
 uniform mat4 model;
+## if hasMVP_UBO | default(false)
+layout (std140) uniform MVPMatrix {
+    {# // ×¢ÊÍ Í¶Ó°¾ØÕó #}
+    mat4 projection;    
+    {# // ×¢ÊÍ ÊÓÍ¼¾ØÕó #}
+    mat4 view;          
+};
+{# // ×¢ÊÍ hasMVP_UBO #}
+## else 
 uniform mat4 view;
 uniform mat4 projection;
+{# // hasMVP_UBO #}
+## endif 
+{# // hasMVP #}
 ## endif 
 
 

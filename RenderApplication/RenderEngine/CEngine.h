@@ -1,8 +1,10 @@
 #pragma once
+#include <entt/entt.hpp>
 #include <ISingletonInterface.h>
 #include "IEngineInterface.h"
 #include "Model/CModel.h"
 #include "Material/CMaterialSystem.h"
+
 
 class CEngine : public IEngineInterface,
 	public ISingletonInterface<CEngine>
@@ -14,6 +16,10 @@ public:
 	bool LoadModel(const char* path) override;
 private:
 	void AppendModel(const CModel& model);
+	// 把child绑定到parent上
+	void BindModel(entt::entity parent, entt::entity child);
+	// 把entity从当前它所绑定的节点上解绑
+	void UnBindModel(entt::entity entity);
 private:
 	bool CreateModelChess();
 	bool CreateModelColumn();

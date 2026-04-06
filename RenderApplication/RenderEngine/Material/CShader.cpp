@@ -53,7 +53,19 @@ bool CShader::SetupShader()
 		return false;
 	}
 	
-	return CreateShader(m_strVertexCode, m_strFragmentCode);
+	if (!CreateShader(m_strVertexCode, m_strFragmentCode)) {
+		PRINTLOG("Fail to create shader");
+		return false;
+	}
+
+	// ´´½¨MVPMatrix
+	if (m_desc.hasMVP_UBO) {
+		if (!UBO_MVP_Create()) {
+			PRINTLOG("Fail to create UBO of MVP");
+			return false;
+		}
+	}
+	return true;
 }
 
 inja::json CShader::ShaderDescToInjaJson()
@@ -61,6 +73,7 @@ inja::json CShader::ShaderDescToInjaJson()
 	inja::json json;
 
 	json["hasMVP"] = m_desc.hasMVP;
+	json["hasMVP_UBO"] = m_desc.hasMVP_UBO;
 	json["hasPosition"] = m_desc.hasPosition;
 	json["hasColor"] = m_desc.hasColor;
 	json["hasNormal"] = m_desc.hasNormal;
@@ -170,6 +183,38 @@ bool CShader::LinkProgram()
 	glAttachShader(m_ID, m_FragmentId);
 	glLinkProgram(m_ID);
 	return CheckLinkResult(m_ID);
+}
+
+bool CShader::UBO_MVP_Create()
+{
+	CUniformBuffer::S_UNIFORMBUFFER_DESC desc;
+	desc.BindingPoint = UBO_BINDINGPOINT_MVP;
+	desc.size = sizeof(S_SHADER_MVP_MATRIX);
+	m_UBO_MVPMatrix = CResourceManager::AquireUnifrombuffer(desc);
+	if (nullptr == m_UBO_MVPMatrix) {
+		PRINTLOG("Fail to create UBO of MVP");
+		return false;
+	}
+	if (!UBO_MVP_BindingPoint(desc.BindingPoint)) {
+		PRINTLOG("Fail to bind MVP BindingPoint");
+		return false;
+	}
+	return true;
+}
+
+bool CShader::UBO_BindingPoint(const std::string& strNeme, unsigned int binding)
+{
+	unsigned int blockIndex = glGetUniformBlockIndex(m_ID, strNeme.c_str());
+	if (GL_INVALID_INDEX == blockIndex) {
+		return false;
+	}
+	glUniformBlockBinding(m_ID, blockIndex, binding);
+	return true;
+}
+
+bool CShader::UBO_MVP_BindingPoint(unsigned int binding)
+{
+	return UBO_BindingPoint("MVPMatrix", binding);
 }
 
 void CShader::use() const

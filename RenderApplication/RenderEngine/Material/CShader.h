@@ -3,15 +3,23 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <inja/inja.hpp>
+#include "../Resource/CResourceManager.h"
 
 class CMaterial;
 
 class CShader
 {
 public:
+	typedef struct _S_SHADER_MVP_MATRIX
+	{
+		glm::mat4 projection;
+		glm::mat4 view;
+	}S_SHADER_MVP_MATRIX;
+
 	typedef struct _S_SHADER_DESC
 	{
 		bool hasMVP = true;
+		bool hasMVP_UBO = true;	// 通过UBO设置投影矩阵和视图矩阵
 		bool hasPosition = true;
 		bool hasColor = false;
 		bool hasNormal = false;
@@ -36,9 +44,15 @@ private:
 	bool CompileVertex(const std::string& strCode);
 	bool CompileFragment(const std::string& strCode);
 	bool LinkProgram();
+private:
+	bool UBO_MVP_Create();
+private: // UBO
+	bool UBO_BindingPoint(const std::string& strNeme, unsigned int binding);
 public:
 	bool IsOK() { return m_ok; } 
 	const S_SHADER_DESC& GetDesc() { return m_desc; }
+public: // UBO
+	bool UBO_MVP_BindingPoint(unsigned int binding);
 public:
 	void use() const;
 	void setBool(const std::string& name, bool value) const;
@@ -64,4 +78,6 @@ private:
 	unsigned int	m_VertexId;
 	unsigned int	m_FragmentId;
 	unsigned int	m_ID;
+public:
+	std::shared_ptr<CUniformBuffer> m_UBO_MVPMatrix;
 };

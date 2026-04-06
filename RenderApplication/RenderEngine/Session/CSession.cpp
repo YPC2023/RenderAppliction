@@ -53,6 +53,14 @@ void CSession::Render()
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// 通过UBO设置投影矩阵和视图矩阵
+	std::shared_ptr<CUniformBuffer> ubo = CResourceManager::AquireUnifrombuffer(UBO_BINDINGPOINT_MVP);
+	if (nullptr != ubo) {
+		ubo->SendData(&m_camera->GetProjection(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, projection));
+		ubo->SendData(&m_camera->GetView(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, view));
+	}
+	
+
 	CRenderSystem::CRenderContext context;
 	context.m_Camera = m_camera;
 	//context.m_Material = m_MaterialRender;

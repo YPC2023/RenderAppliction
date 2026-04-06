@@ -116,6 +116,34 @@ void CEngine::AppendModel(const CModel& model)
 	}
 }
 
+void CEngine::BindModel(entt::entity parent, entt::entity child)
+{
+	// 对父节点进行解绑
+	UnBindModel(parent);
+	UnBindModel(child);
+
+	CSceneGraphComponent::S_RELATION_INFO& ParentRelation = CSceneGraphManager::GetInstance().
+		QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(parent);
+	CSceneGraphComponent::S_RELATION_INFO& ChildRelation = CSceneGraphManager::GetInstance().
+		QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(child);
+	ParentRelation.children.insert(child);
+	ChildRelation.parent = parent;
+}
+
+void CEngine::UnBindModel(entt::entity entity)
+{
+	CSceneGraphComponent::S_RELATION_INFO& CurrentRelation = CSceneGraphManager::GetInstance().
+		QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(entity);
+	if (entt::null != CurrentRelation.parent) {
+		CSceneGraphComponent::S_RELATION_INFO& ParentRelation = CSceneGraphManager::GetInstance().
+			QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(CurrentRelation.parent);
+		// 移除子节点
+		ParentRelation.children.erase(entity);
+	}
+	// 移除父节点
+	CurrentRelation.parent = entt::null;
+}
+
 bool CEngine::CreateModelChess()
 {
 	// 从文件加载模型文件

@@ -77,9 +77,12 @@ void CRenderSystem::RenderMesh(const CRenderContext& context,
 	}
 
 	material->m_shader->use();
-	material->m_shader->setMat4("projection", context.m_Camera->GetProjection());
-	material->m_shader->setMat4("view", context.m_Camera->GetView());
-
+	// 在只有mvp但是没有使用ubo的mvp时，需要本地设置投影矩阵和视图矩阵，否则在session中统一通过ubo设置
+	if (material->m_shader->GetDesc().hasMVP && !material->m_shader->GetDesc().hasMVP_UBO) {
+		material->m_shader->setMat4("projection", context.m_Camera->GetProjection());
+		material->m_shader->setMat4("view", context.m_Camera->GetView());
+	}
+	
 	// 渲染选中高光
 	if (material->GetDesc().hasSelected) {
 		material->m_shader->setBool("selectedID", entity == context.m_SelectedId);

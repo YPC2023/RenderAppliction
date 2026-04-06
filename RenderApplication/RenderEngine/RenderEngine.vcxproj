@@ -163,6 +163,7 @@
     <ClInclude Include="Resource\CFramebuffer.h" />
     <ClInclude Include="Resource\CResourceManager.h" />
     <ClInclude Include="Resource\CTexture.h" />
+    <ClInclude Include="Resource\CUniformBuffer.h" />
     <ClInclude Include="SceneGraph\Camera.h" />
     <ClInclude Include="SceneGraph\CSceneGraphComponent.h" />
     <ClInclude Include="SceneGraph\CSceneGraphManager.h" />
@@ -221,6 +222,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Resource\CTexture.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Resource\CUniformBuffer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneGraph\Camera.cpp">

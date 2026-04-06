@@ -24,3 +24,9 @@ static const glm::vec3 CONST_CAMERA_UP = glm::vec3(0.0f, 1.0f, 0.0f);
 static const float CONST_CAMERA_FOV = 90.0f;
 static const float CONST_CAMERA_NEAR = 0.1f;
 static const float CONST_CAMERA_FAR = 100.0f;
+
+// UBO的BindingPoint
+enum UBO_BINDINGPOINT_INDEX
+{
+	UBO_BINDINGPOINT_MVP = 0, // 投影矩阵和视图矩阵UBO
+};
