@@ -10,7 +10,7 @@ CWindow* CWindowManager::CreateWindow2(const std::string& strName, E_WINDOW_TYPE
 	if (E_WINDOW_RENDER == type) {
 		pWindow = new CRenderWindow(strName);
 	}
-	else if (E_WINDOW_PROPERTY) {
+	else if (E_WINDOW_PROPERTY == type) {
 		pWindow = new CRightWindow(strName);
 	}
 	else {

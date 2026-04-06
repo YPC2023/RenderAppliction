@@ -17,7 +17,9 @@ void CRightWindow::UnInitialize()
 
 void CRightWindow::OnRender()
 {
-
+	if (ImGui::Button("Merge")) {
+		PRINTLOG("OK");
+	}
 }
 
 void CRightWindow::OnSize(int x, int y)
