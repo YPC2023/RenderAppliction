@@ -90,6 +90,17 @@ void CSession::Resize(int width, int height)
 	}
 }
 
+bool CSession::MergeModel()
+{
+	CSessionManager::SwitchCurrentSession(this);
+	// 用户是否有且只选择了两个对象
+	if (2 != m_set_SelectedId.size()) {
+		PRINTLOG("Selected model mush equal 2(current is %u)", m_set_SelectedId.size());
+		return false;
+	}
+	return CEngine::GetInstance().MergeModel(*m_set_SelectedId.begin(), *std::next(m_set_SelectedId.begin()));
+}
+
 void CSession::OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y)
 {
 	CSessionManager::SwitchCurrentSession(this);

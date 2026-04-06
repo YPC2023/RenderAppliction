@@ -23,11 +23,23 @@ void CRightWindow::SetSessionInterface(ISessionInterface* pInterface)
 void CRightWindow::OnRender()
 {
 	if (ImGui::Button("Merge")) {
-		PRINTLOG("OK");
+		MergeMode();
 	}
 }
 
 void CRightWindow::OnSize(int x, int y)
 {
 
+}
+
+void CRightWindow::MergeMode()
+{
+	if (nullptr == m_pISessionInterface) {
+		PRINTLOG("Initialize session interface first. please");
+		return;
+	}
+
+	if (!m_pISessionInterface->MergeModel()) {
+		PRINTLOG("Fail to merge model");
+	}
 }

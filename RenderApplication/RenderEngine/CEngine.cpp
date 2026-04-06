@@ -6,15 +6,17 @@
 
 bool CEngine::Initialize()
 {
+	/*
 	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
 		return false;
 	}
-	
+	*/
 	if (!CreateModelColumn()) {
 		PRINTLOG("Fail to create column model");
 		return false;
 	}
+	/*
 	if (!CreateModelSphere()) {
 		PRINTLOG("Fail to create sphere model");
 		return false;
@@ -24,10 +26,12 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create cone model");
 		return false;
 	}
+	*/
 	if (!CreateModelTorus()) {
 		PRINTLOG("Fail to create torus model");
 		return false;
 	}
+	
 	return true;
 }
 
@@ -62,6 +66,13 @@ bool CEngine::LoadModel(const char* path)
 	}
 	
 	//AppendModel(*FileModel.get());
+	return true;
+}
+
+bool CEngine::MergeModel(entt::entity parent, entt::entity child)
+{
+	PRINTLOG("Merge");
+	BindModel(parent, child);
 	return true;
 }
 
@@ -119,7 +130,7 @@ void CEngine::AppendModel(const CModel& model)
 void CEngine::BindModel(entt::entity parent, entt::entity child)
 {
 	// 对父节点进行解绑
-	UnBindModel(parent);
+	//UnBindModel(parent); // 父节点不用解绑
 	UnBindModel(child);
 
 	CSceneGraphComponent::S_RELATION_INFO& ParentRelation = CSceneGraphManager::GetInstance().

@@ -14,6 +14,8 @@ public:
 	void UnInitialize() override;
 	bool SetLoader(GLADloadproc loader) override;
 	bool LoadModel(const char* path) override;
+public:
+	bool MergeModel(entt::entity parent, entt::entity child);
 private:
 	void AppendModel(const CModel& model);
 	// 把child绑定到parent上

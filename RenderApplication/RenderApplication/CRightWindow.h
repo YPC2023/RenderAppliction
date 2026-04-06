@@ -14,7 +14,6 @@ public:
 public:
 	void OnRender() override;
 	void OnSize(int x, int y) override;
-
 private:
-	ISessionInterface* m_pISessionInterface;
+	void MergeMode();
 };
