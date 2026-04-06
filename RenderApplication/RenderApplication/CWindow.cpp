@@ -8,6 +8,8 @@ CWindow::CWindow(const std::string& strName)
 	m_LastSize = ImVec2(0, 0);
 
 	m_Debug_Enable = false;
+
+	m_pISessionInterface = nullptr;
 }
 
 bool CWindow::Initialize()
@@ -163,4 +165,9 @@ IWindowInterface::E_MOUSE_BUTTON_TYPE CWindow::TranslateImguiToLocalButton(ImGui
 		return E_MOUSE_BUTTON_MIDDLE;
 	}
 	return E_MOUSE_BUTTON_UNKOWN;
+}
+
+void CWindow::SetSessionInterface(ISessionInterface* pISessionInterface)
+{
+	m_pISessionInterface = pISessionInterface;
 }

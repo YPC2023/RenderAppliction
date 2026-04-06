@@ -140,7 +140,8 @@ bool CApplicationWindow::InitializeWindow()
 		PRINTLOG("Fail to initialize [%s] Window", m_pWindowRight->GetName().c_str());
 		return false;
 	}
-
+	// 公用会话接口
+	m_pWindowRight->SetSessionInterface(m_pWindowMiddleTop->GetSessionInterface());
 	return true;
 }
 

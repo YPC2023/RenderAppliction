@@ -1,5 +1,6 @@
 #pragma once
 #include "CWindow.h"
+#include "CEngineBuilder.h"
 
 class CRightWindow : public CWindow
 {
@@ -9,7 +10,11 @@ protected:
 public:
 	bool Initialize() override;
 	void UnInitialize() override;
+	void SetSessionInterface(ISessionInterface* pInterface);
 public:
 	void OnRender() override;
 	void OnSize(int x, int y) override;
+
+private:
+	ISessionInterface* m_pISessionInterface;
 };

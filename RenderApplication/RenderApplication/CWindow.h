@@ -1,8 +1,9 @@
 #pragma once
 
-#include "CUtils.h"
+#include <CUtils.h>
+#include <imgui.h>
 #include "IWindowInterface.h"
-#include "imgui.h"
+#include "CEngineBuilder.h"
 
 class CWindow : public IWindowInterface
 {
@@ -29,6 +30,9 @@ private:
 	void CheckMouseAction();
 	void CheckKeyboardAction();
 	E_MOUSE_BUTTON_TYPE TranslateImguiToLocalButton(ImGuiMouseButton_ key);
+public:
+	ISessionInterface* GetSessionInterface() { return m_pISessionInterface; }
+	void SetSessionInterface(ISessionInterface* pISessionInterface);
 protected:
 	std::string		m_strName;
 	ImVec2			m_LastSize;
@@ -36,5 +40,7 @@ protected:
 protected:
 	ImVec2			m_Debug_Point;
 	bool			m_Debug_Enable;
+protected:
+	ISessionInterface* m_pISessionInterface;
 };
 

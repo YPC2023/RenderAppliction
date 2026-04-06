@@ -21,7 +21,5 @@ private:
 	ImVec2	GetRelativePosition(const ImVec2& point);
 	ISessionInterface::E_MOUSE_BUTTON_TYPE TranslateImguiButtonToEngine(E_MOUSE_BUTTON_TYPE key);
 	ISessionInterface::E_MOUSE_ACTION_TYPE TranslateImguiActionToEngine(E_MOUSE_ACTION_TYPE action);
-private:
-	ISessionInterface* m_pISessionInterface;
 };
 
