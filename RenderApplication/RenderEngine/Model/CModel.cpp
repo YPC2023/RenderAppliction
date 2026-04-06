@@ -229,7 +229,9 @@ bool CModel::InitializeColumn()
         m_desc.S_MODEL_COLUMN_DESC.end, 
         vertices, indices, 
         m_desc.S_MODEL_COLUMN_DESC.radius, 
-        m_desc.S_MODEL_COLUMN_DESC.sectors);
+        m_desc.S_MODEL_COLUMN_DESC.sectors,
+        m_desc.S_MODEL_COLUMN_DESC.sColor,
+        m_desc.S_MODEL_COLUMN_DESC.eColor);
     m_vec_mesh.push_back(CMesh(vertices, indices, m_desc.vertexResize, m_desc.textureResize));
     return true;
 }

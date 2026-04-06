@@ -6,17 +6,19 @@
 
 bool CEngine::Initialize()
 {
+	if (!CreateCoordinateAxes()) {
+		PRINTLOG("Fail to create CoordinateAxes");
+		return false;
+	}
 	/*
 	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
 		return false;
 	}
-	*/
 	if (!CreateModelColumn()) {
 		PRINTLOG("Fail to create column model");
 		return false;
 	}
-	/*
 	if (!CreateModelSphere()) {
 		PRINTLOG("Fail to create sphere model");
 		return false;
@@ -26,12 +28,11 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create cone model");
 		return false;
 	}
-	*/
 	if (!CreateModelTorus()) {
 		PRINTLOG("Fail to create torus model");
 		return false;
 	}
-	
+	*/
 	return true;
 }
 
@@ -65,7 +66,7 @@ bool CEngine::LoadModel(const char* path)
 		return false;
 	}
 	
-	//AppendModel(*FileModel.get());
+	AppendModel(*FileModel.get());
 	return true;
 }
 
@@ -76,13 +77,13 @@ bool CEngine::MergeModel(entt::entity parent, entt::entity child)
 	return true;
 }
 
-void CEngine::AppendModel(const CModel& model)
+entt::entity CEngine::AppendModel(const CModel& model)
 {
 	// 创建model节点
 	entt::entity entityModel = CSceneGraphManager::GetInstance().CreateNode();
 	if (entt::null == entityModel) {
 		PRINTLOG("Fail to create scene model node");
-		return;
+		return entt::null;
 	}
 	
 	// 添加model节点并返回引用
@@ -98,7 +99,7 @@ void CEngine::AppendModel(const CModel& model)
 		entt::entity entityMesh = CSceneGraphManager::GetInstance().CreateNode();
 		if (entt::null == entityMesh) {
 			PRINTLOG("Fail to create scene mesh node");
-			return ;
+			return entt::null;
 		}
 		// 指向子节点
 		ModelRelation.children.insert(entityMesh);
@@ -125,6 +126,7 @@ void CEngine::AppendModel(const CModel& model)
 		mesh.EBO = model.m_vec_mesh[indexMesh].m_EBO;
 		mesh.size = model.m_vec_mesh[indexMesh].m_vec_Indices.size();
 	}
+	return entityModel;
 }
 
 void CEngine::BindModel(entt::entity parent, entt::entity child)
@@ -166,7 +168,7 @@ bool CEngine::CreateModelChess()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	(void)AppendModel(*Model.get());
 	return true;
 }
 
@@ -181,7 +183,7 @@ bool CEngine::CreateModelColumn()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	(void)AppendModel(*Model.get());
 	return true;
 }
 
@@ -196,7 +198,7 @@ bool CEngine::CreateModelSphere()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	(void)AppendModel(*Model.get());
 	return true;
 }
 
@@ -209,7 +211,7 @@ bool CEngine::CreateModelCone()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	(void)AppendModel(*Model.get());
 	return true;
 }
 
@@ -222,6 +224,112 @@ bool CEngine::CreateModelTorus()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	AppendModel(*Model.get());
+	(void)AppendModel(*Model.get());
 	return true;
+}
+
+bool CEngine::CreateCoordinateAxes()
+{
+	entt::entity x = CreateCoordinateAxesX();
+	entt::entity y = CreateCoordinateAxesY();
+	BindModel(x, y);
+	entt::entity z = CreateCoordinateAxesZ();
+	BindModel(x, z);
+	return true;
+}
+
+entt::entity CEngine::CreateCoordinateAxesX()
+{
+	// 坐标轴圆柱体
+	CModel::S_MODEL_DESC descColumn;
+	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(5.0f, 0.0f, 0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
+	descColumn.S_MODEL_COLUMN_DESC.sColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	descColumn.S_MODEL_COLUMN_DESC.eColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	std::shared_ptr<CModel> AxesXColumn = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, descColumn);
+	if (nullptr == AxesXColumn) {
+		PRINTLOG("Fail to create MoAxesXdel");
+		return entt::null;
+	}
+	entt::entity entityColumn = AppendModel(*AxesXColumn.get());
+
+	CModel::S_MODEL_DESC descArrow;
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
+	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
+	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
+	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;
+	std::shared_ptr<CModel> AxesXArrow = CModelLoader::LoadModel(CModel::E_MODEL_CONE, descArrow);
+	if (nullptr == AxesXArrow) {
+		PRINTLOG("Fail to load Model");
+		return entt::null;
+	}
+	entt::entity entityArrow = AppendModel(*AxesXArrow.get());
+	BindModel(entityColumn, entityArrow);
+	return entityColumn;
+}
+
+entt::entity CEngine::CreateCoordinateAxesY()
+{
+	// 坐标轴圆柱体
+	CModel::S_MODEL_DESC descColumn;
+	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 5.0f, 0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
+	descColumn.S_MODEL_COLUMN_DESC.sColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+	descColumn.S_MODEL_COLUMN_DESC.eColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+	std::shared_ptr<CModel> AxesXColumn = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, descColumn);
+	if (nullptr == AxesXColumn) {
+		PRINTLOG("Fail to create MoAxesXdel");
+		return entt::null;
+	}
+	entt::entity entityColumn = AppendModel(*AxesXColumn.get());
+
+	CModel::S_MODEL_DESC descArrow;
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
+	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
+	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
+	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;
+	std::shared_ptr<CModel> AxesXArrow = CModelLoader::LoadModel(CModel::E_MODEL_CONE, descArrow);
+	if (nullptr == AxesXArrow) {
+		PRINTLOG("Fail to load Model");
+		return entt::null;
+	}
+	entt::entity entityArrow = AppendModel(*AxesXArrow.get());
+	BindModel(entityColumn, entityArrow);
+	return entityColumn;
+}
+
+entt::entity CEngine::CreateCoordinateAxesZ()
+{
+	// 坐标轴圆柱体
+	CModel::S_MODEL_DESC descColumn;
+	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 0.0f, 5.0f);
+	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
+	descColumn.S_MODEL_COLUMN_DESC.sColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+	descColumn.S_MODEL_COLUMN_DESC.eColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+	std::shared_ptr<CModel> AxesXColumn = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, descColumn);
+	if (nullptr == AxesXColumn) {
+		PRINTLOG("Fail to create MoAxesXdel");
+		return entt::null;
+	}
+	entt::entity entityColumn = AppendModel(*AxesXColumn.get());
+
+	CModel::S_MODEL_DESC descArrow;
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
+	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
+	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
+	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;
+	std::shared_ptr<CModel> AxesXArrow = CModelLoader::LoadModel(CModel::E_MODEL_CONE, descArrow);
+	if (nullptr == AxesXArrow) {
+		PRINTLOG("Fail to load Model");
+		return entt::null;
+	}
+	entt::entity entityArrow = AppendModel(*AxesXArrow.get());
+	BindModel(entityColumn, entityArrow);
+	return entityColumn;
 }

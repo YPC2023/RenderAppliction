@@ -398,7 +398,7 @@ void CSession::OnMouseWheel(float delta)
 	if (newScale < 0.1f) newScale = 0.1f;
 	if (newScale > 10.0f) newScale = 10.0f;
 	Transform.scale = glm::vec3(newScale, newScale, newScale);
-	PRINTLOG("%u[%f,%f,%f]", pickedId, Transform.scale.x, Transform.scale.y, Transform.scale.z);
+	//PRINTLOG("%u[%f,%f,%f]", pickedId, Transform.scale.x, Transform.scale.y, Transform.scale.z);
 }
 
 void CSession::OnMouseLeftPress(int x, int y)
