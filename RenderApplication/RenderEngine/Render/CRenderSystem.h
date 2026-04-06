@@ -21,7 +21,9 @@ public:
 	static void Render(const CRenderContext& context, const CSceneGraphManager& scene);
 
 private:
-	static void UpdateNode(CSceneGraphManager& scene, entt::entity entity);
+	static void SortTopologyNode(const CSceneGraphManager& scene,
+		entt::entity entity, std::vector<entt::entity>& vecNodes);
+	static std::vector<entt::entity> GetTopologyOrder(const CSceneGraphManager& scene, bool bReSort = true);
 
 	static void RenderMesh(const CRenderContext& context, 
 		const CSceneGraphManager& scene, entt::entity entity);

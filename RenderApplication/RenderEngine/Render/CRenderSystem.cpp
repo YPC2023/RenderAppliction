@@ -5,15 +5,19 @@
 
 void CRenderSystem::Update(CSceneGraphManager& scene)
 {
-	const auto view = scene.QueryAttributes<CSceneGraphComponent::S_MODEL_INFO>();
-	for (auto entity : view) {
-		const CSceneGraphComponent::S_RELATION_INFO& model = scene.QueryAttribute<CSceneGraphComponent::S_RELATION_INFO>(entity);
-		CSceneGraphComponent::S_TRANSFORM_INFO& Transform = scene.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(entity);
-		Transform.update(glm::mat4(1.0f));
-		std::set<entt::entity>::const_iterator it = model.children.begin();
-		for (; it != model.children.end(); ++it) {
-			UpdateNode(scene, *it);
+	// 获取拓扑排序序列
+	std::vector<entt::entity> vecNodes = GetTopologyOrder(scene, true);
+	for (entt::entity entity : vecNodes) {
+		// 查询节点的“关系”组件
+		const CSceneGraphComponent::S_RELATION_INFO& CurrentRelation = scene.QueryAttribute<CSceneGraphComponent::S_RELATION_INFO>(entity);
+		// 查询节点的“变换”组件
+		CSceneGraphComponent::S_TRANSFORM_INFO& CurrentTransform = scene.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(entity);
+		glm::mat4 baseMatrix(1.0f);
+		if (entt::null != CurrentRelation.parent) {
+			const CSceneGraphComponent::S_TRANSFORM_INFO& ParentTransform = scene.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(CurrentRelation.parent);
+			baseMatrix = ParentTransform.matrix;
 		}
+		CurrentTransform.update(baseMatrix);
 	}
 }
 
@@ -29,20 +33,35 @@ void CRenderSystem::Render(const CRenderContext& context, const CSceneGraphManag
 	}
 }
 
-void CRenderSystem::UpdateNode(CSceneGraphManager& scene, entt::entity entity)
+void CRenderSystem::SortTopologyNode(const CSceneGraphManager& scene,
+	entt::entity entity, std::vector<entt::entity>& vecNodes)
 {
-	const CSceneGraphComponent::S_RELATION_INFO& CurrentRelation = scene.QueryAttribute<CSceneGraphComponent::S_RELATION_INFO>(entity);
-	glm::mat4 baseMatrix(1.0f);
-	if (entt::null != CurrentRelation.parent) {
-		const CSceneGraphComponent::S_TRANSFORM_INFO& Parent = scene.QueryAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(CurrentRelation.parent);
-		baseMatrix = Parent.matrix;
+	vecNodes.push_back(entity); // 先存父节点
+	// 查询子节点
+	const auto& relation = scene.QueryAttribute<CSceneGraphComponent::S_RELATION_INFO>(entity);
+	// 遍历处理子节点
+	for (auto child : relation.children) 
+	{
+		SortTopologyNode(scene, child, vecNodes);
 	}
-	CSceneGraphComponent::S_TRANSFORM_INFO& CurrentTransform = scene.QueryAttributeModify<CSceneGraphComponent::S_TRANSFORM_INFO>(entity);
-	CurrentTransform.update(baseMatrix);
-	std::set<entt::entity>::const_iterator it = CurrentRelation.children.begin();
-	for (; it != CurrentRelation.children.end(); ++it) {
-		UpdateNode(scene, *it);
+}
+
+std::vector<entt::entity> CRenderSystem::GetTopologyOrder(const CSceneGraphManager& scene, bool bReSort)
+{
+	static std::vector<entt::entity> vecNodes;
+	// 判断用户是否要求重新排序
+	if (!bReSort) {
+		return vecNodes;
 	}
+	auto view = scene.QueryAttributes<CSceneGraphComponent::S_RELATION_INFO>();
+	for (auto entity : view) {
+		const auto& relation = scene.QueryAttribute<CSceneGraphComponent::S_RELATION_INFO>(entity);
+		// 只有根节点（没有父节点）才开始 DFS 递归
+		if (relation.parent == entt::null) {
+			SortTopologyNode(scene, entity, vecNodes);
+		}
+	}
+	return vecNodes;
 }
 
 void CRenderSystem::RenderMesh(const CRenderContext& context, 
