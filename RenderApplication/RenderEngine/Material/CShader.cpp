@@ -60,7 +60,7 @@ bool CShader::SetupShader()
 
 	// ´´½¨MVPMatrix
 	if (m_desc.hasMVP_UBO) {
-		if (!UBO_MVP_Create()) {
+		if (!UBO_Create_MVP()) {
 			PRINTLOG("Fail to create UBO of MVP");
 			return false;
 		}
@@ -185,7 +185,7 @@ bool CShader::LinkProgram()
 	return CheckLinkResult(m_ID);
 }
 
-bool CShader::UBO_MVP_Create()
+bool CShader::UBO_Create_MVP()
 {
 	CUniformBuffer::S_UNIFORMBUFFER_DESC desc;
 	desc.BindingPoint = UBO_BINDINGPOINT_MVP;

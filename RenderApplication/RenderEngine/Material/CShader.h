@@ -15,6 +15,10 @@ public:
 		glm::mat4 projection;
 		glm::mat4 view;
 	}S_SHADER_MVP_MATRIX;
+	typedef struct _S_SHADER_SELECT_ID
+	{
+		unsigned int SelectId;
+	}S_SHADER_SELECT_ID;
 
 	typedef struct _S_SHADER_DESC
 	{
@@ -45,7 +49,7 @@ private:
 	bool CompileFragment(const std::string& strCode);
 	bool LinkProgram();
 private:
-	bool UBO_MVP_Create();
+	bool UBO_Create_MVP();
 private: // UBO
 	bool UBO_BindingPoint(const std::string& strNeme, unsigned int binding);
 public:
