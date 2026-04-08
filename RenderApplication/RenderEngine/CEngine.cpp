@@ -10,7 +10,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create CoordinateAxes");
 		return false;
 	}
-	/*
+	
 	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
 		return false;
@@ -32,7 +32,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create torus model");
 		return false;
 	}
-	*/
+	
 	return true;
 }
 
@@ -66,95 +66,14 @@ bool CEngine::LoadModel(const char* path)
 		return false;
 	}
 	
-	AppendModel(*FileModel.get());
+	//(void)SceneGraph::GetInstance().CreateModel(*FileModel.get());
 	return true;
 }
 
 bool CEngine::MergeModel(entt::entity parent, entt::entity child)
 {
-	PRINTLOG("Merge");
-	BindModel(parent, child);
+	SceneGraph::GetInstance().BindModel(parent, child);
 	return true;
-}
-
-entt::entity CEngine::AppendModel(const CModel& model)
-{
-	// 创建model节点
-	entt::entity entityModel = CSceneGraphManager::GetInstance().CreateNode();
-	if (entt::null == entityModel) {
-		PRINTLOG("Fail to create scene model node");
-		return entt::null;
-	}
-	
-	// 添加model节点并返回引用
-	CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_MODEL_INFO>(entityModel, model.m_strPath);
-	// 给model添加transform组件
-	CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(entityModel);
-	// 给model添加relation组件
-	CSceneGraphComponent::S_RELATION_INFO& ModelRelation = CSceneGraphManager::GetInstance().
-		AppendAttribute<CSceneGraphComponent::S_RELATION_INFO>(entityModel);
-
-	for (size_t indexMesh = 0; indexMesh < model.m_vec_mesh.size(); ++indexMesh) {
-		// 创建mesh节点
-		entt::entity entityMesh = CSceneGraphManager::GetInstance().CreateNode();
-		if (entt::null == entityMesh) {
-			PRINTLOG("Fail to create scene mesh node");
-			return entt::null;
-		}
-		// 指向子节点
-		ModelRelation.children.insert(entityMesh);
-
-		std::shared_ptr<CMaterial> material = CMaterialSystem::AquireMaterial(
-			CModelLoader::TranslateMaterial(model.m_vec_mesh[indexMesh]));
-		// 添加材质节点
-		CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_MATERIAL_INFO>(entityMesh, material);
-
-		// 获取mesh节点的引用
-		CSceneGraphComponent::S_MESH_INFO& mesh = CSceneGraphManager::GetInstance().
-			AppendAttribute< CSceneGraphComponent::S_MESH_INFO>(entityMesh);
-		// 给mesh添加transform组件
-		CSceneGraphManager::GetInstance().AppendAttribute<CSceneGraphComponent::S_TRANSFORM_INFO>(entityMesh);
-		// 给mesh添加relation组件
-		CSceneGraphComponent::S_RELATION_INFO& MeshRelation = CSceneGraphManager::GetInstance().
-			AppendAttribute<CSceneGraphComponent::S_RELATION_INFO>(entityMesh);
-		// 指向父节点
-		MeshRelation.parent = entityModel;
-
-		mesh.Type = model.m_vec_mesh[indexMesh].m_nType;
-		mesh.VAO = model.m_vec_mesh[indexMesh].m_VAO;
-		mesh.VBO = model.m_vec_mesh[indexMesh].m_VBO;
-		mesh.EBO = model.m_vec_mesh[indexMesh].m_EBO;
-		mesh.size = model.m_vec_mesh[indexMesh].m_vec_Indices.size();
-	}
-	return entityModel;
-}
-
-void CEngine::BindModel(entt::entity parent, entt::entity child)
-{
-	// 对父节点进行解绑
-	//UnBindModel(parent); // 父节点不用解绑
-	UnBindModel(child);
-
-	CSceneGraphComponent::S_RELATION_INFO& ParentRelation = CSceneGraphManager::GetInstance().
-		QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(parent);
-	CSceneGraphComponent::S_RELATION_INFO& ChildRelation = CSceneGraphManager::GetInstance().
-		QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(child);
-	ParentRelation.children.insert(child);
-	ChildRelation.parent = parent;
-}
-
-void CEngine::UnBindModel(entt::entity entity)
-{
-	CSceneGraphComponent::S_RELATION_INFO& CurrentRelation = CSceneGraphManager::GetInstance().
-		QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(entity);
-	if (entt::null != CurrentRelation.parent) {
-		CSceneGraphComponent::S_RELATION_INFO& ParentRelation = CSceneGraphManager::GetInstance().
-			QueryAttributeModify<CSceneGraphComponent::S_RELATION_INFO>(CurrentRelation.parent);
-		// 移除子节点
-		ParentRelation.children.erase(entity);
-	}
-	// 移除父节点
-	CurrentRelation.parent = entt::null;
 }
 
 bool CEngine::CreateModelChess()
@@ -168,7 +87,7 @@ bool CEngine::CreateModelChess()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	(void)AppendModel(*Model.get());
+	(void)SceneGraph::GetInstance().CreateModel(*Model.get());
 	return true;
 }
 
@@ -183,7 +102,7 @@ bool CEngine::CreateModelColumn()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	(void)AppendModel(*Model.get());
+	(void)SceneGraph::GetInstance().CreateModel(*Model.get());
 	return true;
 }
 
@@ -198,7 +117,7 @@ bool CEngine::CreateModelSphere()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	(void)AppendModel(*Model.get());
+	(void)SceneGraph::GetInstance().CreateModel(*Model.get());
 	return true;
 }
 
@@ -211,7 +130,7 @@ bool CEngine::CreateModelCone()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	(void)AppendModel(*Model.get());
+	(void)SceneGraph::GetInstance().CreateModel(*Model.get());
 	return true;
 }
 
@@ -224,7 +143,7 @@ bool CEngine::CreateModelTorus()
 		PRINTLOG("Fail to load Model");
 		return false;
 	}
-	(void)AppendModel(*Model.get());
+	(void)SceneGraph::GetInstance().CreateModel(*Model.get());
 	return true;
 }
 
@@ -232,9 +151,9 @@ bool CEngine::CreateCoordinateAxes()
 {
 	entt::entity x = CreateCoordinateAxesX();
 	entt::entity y = CreateCoordinateAxesY();
-	BindModel(x, y);
+	SceneGraph::GetInstance().BindModel(x, y, false);
 	entt::entity z = CreateCoordinateAxesZ();
-	BindModel(x, z);
+	SceneGraph::GetInstance().BindModel(x, z, false);
 	return true;
 }
 
@@ -252,7 +171,7 @@ entt::entity CEngine::CreateCoordinateAxesX()
 		PRINTLOG("Fail to create MoAxesXdel");
 		return entt::null;
 	}
-	entt::entity entityColumn = AppendModel(*AxesXColumn.get());
+	entt::entity entityColumn = SceneGraph::GetInstance().CreateModel(*AxesXColumn.get());
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
@@ -265,8 +184,8 @@ entt::entity CEngine::CreateCoordinateAxesX()
 		PRINTLOG("Fail to load Model");
 		return entt::null;
 	}
-	entt::entity entityArrow = AppendModel(*AxesXArrow.get());
-	BindModel(entityColumn, entityArrow);
+	entt::entity entityArrow = SceneGraph::GetInstance().CreateModel(*AxesXArrow.get());
+	SceneGraph::GetInstance().BindModel(entityColumn, entityArrow);
 	return entityColumn;
 }
 
@@ -284,7 +203,7 @@ entt::entity CEngine::CreateCoordinateAxesY()
 		PRINTLOG("Fail to create MoAxesXdel");
 		return entt::null;
 	}
-	entt::entity entityColumn = AppendModel(*AxesXColumn.get());
+	entt::entity entityColumn = SceneGraph::GetInstance().CreateModel(*AxesXColumn.get());
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
@@ -297,8 +216,8 @@ entt::entity CEngine::CreateCoordinateAxesY()
 		PRINTLOG("Fail to load Model");
 		return entt::null;
 	}
-	entt::entity entityArrow = AppendModel(*AxesXArrow.get());
-	BindModel(entityColumn, entityArrow);
+	entt::entity entityArrow = SceneGraph::GetInstance().CreateModel(*AxesXArrow.get());
+	SceneGraph::GetInstance().BindModel(entityColumn, entityArrow);
 	return entityColumn;
 }
 
@@ -316,7 +235,7 @@ entt::entity CEngine::CreateCoordinateAxesZ()
 		PRINTLOG("Fail to create MoAxesXdel");
 		return entt::null;
 	}
-	entt::entity entityColumn = AppendModel(*AxesXColumn.get());
+	entt::entity entityColumn = SceneGraph::GetInstance().CreateModel(*AxesXColumn.get());
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
@@ -329,7 +248,7 @@ entt::entity CEngine::CreateCoordinateAxesZ()
 		PRINTLOG("Fail to load Model");
 		return entt::null;
 	}
-	entt::entity entityArrow = AppendModel(*AxesXArrow.get());
-	BindModel(entityColumn, entityArrow);
+	entt::entity entityArrow = SceneGraph::GetInstance().CreateModel(*AxesXArrow.get());
+	SceneGraph::GetInstance().BindModel(entityColumn, entityArrow);
 	return entityColumn;
 }

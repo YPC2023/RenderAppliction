@@ -1,7 +1,6 @@
 #pragma once
 #include "../Session/CSessionManager.h"
-#include "../SceneGraph/CSceneGraphManager.h"
-#include "../SceneGraph/CSceneGraphComponent.h"
+#include "../SceneGraph/SceneGraph.h"
 
 class CRenderSystem
 {
@@ -14,28 +13,20 @@ public:
 		bool						m_RenderID = false;
 	};
 public:
-	static void Initialize(CRenderContext& context, CSceneGraphManager& scene);
-	static void Update(CSceneGraphManager& scene);
-	static void Render(const CRenderContext& context, const CSceneGraphManager& scene);
+	static void Initialize(CRenderContext& context, SceneGraph& scene);
+	static void Update(SceneGraph& scene);
+	static void Render(const CRenderContext& context, const SceneGraph& scene);
 
 private:
-	static std::vector<entt::entity> GetTopNode(const CSceneGraphManager& scene);
-
-	static void UpdateNodeRoot(CSceneGraphManager& scene, entt::entity root, entt::entity entity);
-	static void UpdateNodeRoot(CSceneGraphManager& scene);
-
-	static void UpdateTransform(CSceneGraphManager& scene);
-
-	static void SortTopologyNode(const CSceneGraphManager& scene,
-		entt::entity entity, std::vector<entt::entity>& vecNodes);
-	static std::vector<entt::entity> GetTopologyOrder(const CSceneGraphManager& scene);
+	static void UpdateModel(SceneGraph& scene);
+	static void UpdateMesh(SceneGraph& scene);
 
 	static void RenderMesh(const CRenderContext& context, 
-		const CSceneGraphManager& scene, entt::entity entity);
+		const SceneGraph& scene, entt::entity entity);
 
 	static void ActiveTexture(const CRenderContext& context, 
 		std::shared_ptr<CMaterial> material, 
-		const CSceneGraphComponent::S_MESH_INFO& mesh);
+		const SGCmpnt::S_CMPNT_MESH& mesh);
 
 	static void SetRenderId(const CRenderContext& context, 
 		std::shared_ptr<CMaterial> material, 

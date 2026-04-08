@@ -165,9 +165,8 @@
     <ClInclude Include="Resource\CTexture.h" />
     <ClInclude Include="Resource\CUniformBuffer.h" />
     <ClInclude Include="SceneGraph\Camera.h" />
-    <ClInclude Include="SceneGraph\CSceneGraphComponent.h" />
-    <ClInclude Include="SceneGraph\CSceneGraphManager.h" />
-    <ClInclude Include="SceneGraph\CSceneGraphNode.h" />
+    <ClInclude Include="SceneGraph\SceneComponents.h" />
+    <ClInclude Include="SceneGraph\SceneGraph.h" />
     <ClInclude Include="Session\CSession.h" />
     <ClInclude Include="Session\CSessionManager.h" />
   </ItemGroup>
@@ -230,14 +229,9 @@
     <ClCompile Include="SceneGraph\Camera.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SceneGraph\CSceneGraphComponent.cpp">
+    <ClCompile Include="SceneGraph\SceneGraph.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="SceneGraph\CSceneGraphManager.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="SceneGraph\CSceneGraphNode.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Session\CSession.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

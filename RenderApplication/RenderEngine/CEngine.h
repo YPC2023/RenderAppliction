@@ -17,12 +17,6 @@ public:
 public:
 	bool MergeModel(entt::entity parent, entt::entity child);
 private:
-	entt::entity AppendModel(const CModel& model);
-	// 把child绑定到parent上
-	void BindModel(entt::entity parent, entt::entity child);
-	// 把entity从当前它所绑定的节点上解绑
-	void UnBindModel(entt::entity entity);
-private:
 	bool CreateModelChess();
 	bool CreateModelColumn();
 	bool CreateModelSphere();

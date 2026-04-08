@@ -54,15 +54,6 @@
     <ClInclude Include="Material\CMaterialSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="SceneGraph\CSceneGraphManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGraph\CSceneGraphNode.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGraph\CSceneGraphComponent.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Model\CMesh.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -97,6 +88,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Resource\CUniformBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph\SceneComponents.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph\SceneGraph.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -134,15 +131,6 @@
     <ClCompile Include="Material\CMaterialSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SceneGraph\CSceneGraphManager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGraph\CSceneGraphNode.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGraph\CSceneGraphComponent.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Model\CMesh.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -171,6 +159,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Resource\CUniformBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\SceneGraph.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

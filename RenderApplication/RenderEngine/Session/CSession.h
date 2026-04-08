@@ -49,6 +49,8 @@ private:
 		const glm::vec3& centerPoint,
 		const glm::vec3& rotationAxis);
 private:
+	void ResetTransformInfo();
+private:
 	void OnModelSelectedAction(int x, int y);
 	void OnModelTranslateActionBegin(int x, int y);
 	void OnModelTranslateActionEnd(int x, int y);
@@ -78,6 +80,7 @@ private:
 	std::shared_ptr<CMaterial>		m_MaterialRender;
 	std::shared_ptr<CMaterial>		m_MaterialSelect;
 	std::set<entt::entity>			m_set_SelectedId;
+	std::set<entt::entity>			m_set_TransformId;
 
 
 	bool							m_bLeftMouseMoved;
