@@ -15,7 +15,7 @@ public:
 	bool SetLoader(GLADloadproc loader) override;
 	bool LoadModel(const char* path) override;
 public:
-	bool MergeModel(entt::entity parent, entt::entity child);
+	bool MergeModel(const std::set<entt::entity>& setModel);
 private:
 	bool CreateModelChess();
 	bool CreateModelColumn();

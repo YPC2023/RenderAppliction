@@ -32,26 +32,7 @@ std::string CUtils::GetSolutionPathDir()
 
 std::string CUtils::GetProjectPathDir()
 {
-    char buffer[MAX_PATH];
-    DWORD length = GetCurrentDirectoryA(MAX_PATH, buffer);
-
-    if (length == 0) {
-        // 获取失败
-        DWORD error = GetLastError();
-        PRINTLOG("GetCurrentDirectory failed, error: %d", error);
-        return "";
-    }
-
-    if (length > MAX_PATH) {
-        // 缓冲区太小，需要更大的缓冲区
-        char* dynamicBuffer = new char[length];
-        GetCurrentDirectoryA(length, dynamicBuffer);
-        std::string result(dynamicBuffer);
-        delete[] dynamicBuffer;
-        return result;
-    }
-
-    return (std::string(buffer) + "/");
+    return (std::string(PROJECT_DIR_PATH) + "\\");
 }
 
 std::string CUtils::GetRootPathDir()

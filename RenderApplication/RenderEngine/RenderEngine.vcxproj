@@ -110,7 +110,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>ENGINE_API_EXPORTS;_CRT_SECURE_NO_WARNINGS;SOLUTION_DIR_PATH=R"($(SolutionDir))";GLM_ENABLE_EXPERIMENTAL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ENGINE_API_EXPORTS;_CRT_SECURE_NO_WARNINGS;SOLUTION_DIR_PATH=R"($(SolutionDir))";PROJECT_DIR_PATH=R"($(ProjectDir))";GLM_ENABLE_EXPERIMENTAL;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -151,6 +151,7 @@
     <ClInclude Include="Core\Define.h" />
     <ClInclude Include="Core\SourceHandle.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Graphviz\Graphviz.h" />
     <ClInclude Include="IEngineInterface.h" />
     <ClInclude Include="Material\CMaterial.h" />
     <ClInclude Include="Material\CMaterialSystem.h" />
@@ -187,6 +188,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Graphviz\Graphviz.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Material\CMaterial.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

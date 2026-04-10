@@ -1,8 +1,9 @@
 #include "CSession.h"
-#include "../CEngine.h"
 #include <CUtils.h>
 #include "CSessionManager.h"
+#include "../CEngine.h"
 #include "../Render/CRenderSystem.h"
+#include "../Graphviz/Graphviz.h"
 
 CSession::CSession()
 {
@@ -91,12 +92,7 @@ void CSession::Resize(int width, int height)
 bool CSession::MergeModel()
 {
 	CSessionManager::SwitchCurrentSession(this);
-	// 用户是否有且只选择了两个对象
-	if (2 != m_set_SelectedId.size()) {
-		PRINTLOG("Selected model mush equal 2(current is %u)", m_set_SelectedId.size());
-		return false;
-	}
-	return CEngine::GetInstance().MergeModel(*m_set_SelectedId.begin(), *std::next(m_set_SelectedId.begin()));
+	return CEngine::GetInstance().MergeModel(m_set_SelectedId);
 }
 
 void CSession::OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y)
@@ -379,6 +375,7 @@ void CSession::OnModelRotateActionIng(int x, int y)
 
 		// D. 计算角度差值
 		float deltaAngle = currentAngle - m_StartRotateAngle;
+		//PRINTLOG("%f-%f=%f", currentAngle, m_StartRotateAngle, deltaAngle);
 		// E. 构造增量四元数，并叠加到初始姿态上
 		glm::quat deltaQuat = glm::angleAxis(deltaAngle, glm::normalize(m_AxisTransform));
 		Transform.rotation = deltaQuat;
@@ -422,6 +419,7 @@ void CSession::OnMouseLeftPress(int x, int y)
 
 void CSession::OnMouseLeftRelease(int x, int y)
 {
+	Graphviz::GetInstance().RenderGraph(SceneGraph::GetInstance(), CUtils::GetProjectPathDir() + "SceneGraph.svg");
 	if (!m_bLeftMouseMoved) {
 		OnModelSelectedAction(x, y);
 		return;
@@ -434,7 +432,6 @@ void CSession::OnMouseLeftRelease(int x, int y)
 	}
 
 	m_bLeftMouseMoved = false;
-
 }
 
 void CSession::OnMouseLeftMoving(int x, int y)

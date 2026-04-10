@@ -70,9 +70,16 @@ bool CEngine::LoadModel(const char* path)
 	return true;
 }
 
-bool CEngine::MergeModel(entt::entity parent, entt::entity child)
+bool CEngine::MergeModel(const std::set<entt::entity>& setModel)
 {
-	SceneGraph::GetInstance().BindModel(parent, child);
+	if (2 > setModel.size()) {
+		PRINTLOG("Merge object too less(%u)", setModel.size());
+		return false;
+	}
+	entt::entity root = *setModel.begin();
+	for (auto it = std::next(setModel.begin()); it != setModel.end(); ++it) {
+		SceneGraph::GetInstance().BindModel(root, *it);
+	}
 	return true;
 }
 
