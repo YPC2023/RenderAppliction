@@ -52,6 +52,16 @@ std::string CUtils::GetPathParentPath(const std::string& strPath)
     return strPathTemp;
 }
 
+std::string CUtils::GetPathFileName(const std::string& strPath)
+{
+    std::string strName = strPath;
+    size_t nPos = strPath.find_last_of("\\/");
+    if (strPath.npos != nPos) {
+        strName = strPath.substr(nPos + 1);
+    }
+    return strName;
+}
+
 std::string CUtils::GetSolutionPathDir()
 {
     return (std::string(SOLUTION_DIR_PATH) + "\\");

@@ -153,6 +153,7 @@
     <ClInclude Include="Core\SourceHandle.h" />
     <ClInclude Include="Core\VarWatcher.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Graphviz\ColorGenerator.h" />
     <ClInclude Include="Graphviz\Graphviz.h" />
     <ClInclude Include="IEngineInterface.h" />
     <ClInclude Include="Material\CMaterial.h" />
@@ -190,6 +191,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Graphviz\ColorGenerator.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Graphviz\Graphviz.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

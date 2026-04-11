@@ -1,13 +1,13 @@
 <table border="0" cellborder="1" cellspacing="0" cellpadding="4">
 	<tr>
-		<td bgcolor="#333333" colspan="2">
+		<td bgcolor="#228B22" colspan="2">
 			<font color="white">
-				<b>MESH_INFO</b>
+				<b>{{name}}</b>
 			</font>
 		</td>
 	</tr>
 	<tr>
-		<td bgcolor="#eeeeee">Name</td>
+		<td>Name</td>
 		<td>Value</td>
 	</tr>
 	<tr>
@@ -15,11 +15,11 @@
 		<td>{{parent}}</td>
 	</tr>
 	<tr>
-		<td>tran_id</td>
-		<td>{{transform_id}}</td>
+		<td bgcolor="{{transform_id_bgcolor}}">tran_id</td>
+		<td bgcolor="{{transform_id_bgcolor}}">{{transform_id}}</td>
 	</tr>
 	<tr>
-		<td>select_id</td>
-		<td>{{selected_id}}</td>
+		<td bgcolor="{{selected_id_bgcolor}}">select_id</td>
+		<td bgcolor="{{selected_id_bgcolor}}">{{selected_id}}</td>
 	</tr>
 </table>

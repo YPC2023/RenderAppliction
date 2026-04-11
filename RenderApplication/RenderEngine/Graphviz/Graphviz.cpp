@@ -1,6 +1,7 @@
 #include "Graphviz.h"
 #include <CUtils.h>
 #include <inja/inja.hpp>
+#include "ColorGenerator.h"
 
 #define IDM_INJA_TEMPLATE_MODEL_NAME	"template_model.inja"
 #define IDM_INJA_TEMPLATE_MESH_NAME		"template_mesh.inja"
@@ -80,7 +81,9 @@ inja::json Graphviz::ModelToInjaJson(const S_CONTEXT& cxt, entt::entity entity)
 	json["name"] = strName;
 	json["parent"] = Relation.parent;
 	json["transform_id"] = Relation.transform_id;
+	json["transform_id_bgcolor"] = ColorGenerator::GetInstance().GenerateByTypeHash((int64_t)Relation.transform_id).toHex();
 	json["selected_id"] = Relation.selected_id;
+	json["selected_id_bgcolor"] = ColorGenerator::GetInstance().GenerateByTypeHash((int64_t)Relation.selected_id).toHex();
 	json["selected_with_parent"] = Relation.selected_with_parent;
 	json["children"] = inja::json::array();
 	for (auto entity : Relation.children) {
@@ -100,14 +103,16 @@ inja::json Graphviz::MeshToInjaJson(const S_CONTEXT& cxt, entt::entity entity)
 
 	const auto& Relation = cxt.scene.GetCmpntRelationTransform(entity);
 
-	std::string strName = "MODEL_INFO";
+	std::string strName = "MESH_INFO";
 	strName += "[";
 	strName += CUtils::UintToString((unsigned int)entity);
 	strName += "]";
 	json["name"] = strName;
 	json["parent"] = Relation.parent;
 	json["transform_id"] = Relation.transform_id;
+	json["transform_id_bgcolor"] = ColorGenerator::GetInstance().GenerateByTypeHash((int64_t)Relation.transform_id).toHex();
 	json["selected_id"] = Relation.selected_id;
+	json["selected_id_bgcolor"] = ColorGenerator::GetInstance().GenerateByTypeHash((int64_t)Relation.selected_id).toHex();
 	json["selected_with_parent"] = Relation.selected_with_parent;
 	json["children"] = inja::json::array();
 	for (auto entity : Relation.children) {
@@ -173,7 +178,7 @@ void Graphviz::SetMeshNodeStyle(Agnode_t* node)
 		// 1. 设置样式为 filled
 		agsafeset(node, (char*)"style", "filled", "");
 		// 2. 设置填充颜色为 lightblue (支持颜色名或 Hex 值)
-		agsafeset(node, (char*)"fillcolor", "lightgray", "");
+		agsafeset(node, (char*)"fillcolor", "lightblue", "");
 		// 3. (可选) 设置边框颜色
 		agsafeset(node, (char*)"color", "gray", "");
 

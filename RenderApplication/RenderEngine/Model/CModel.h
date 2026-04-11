@@ -24,6 +24,7 @@ public:
 	typedef struct _S_MODEL_DESC
 	{
 		std::string		strName = "";
+		std::string		strPath = "";
 		float			vertexResize = 1.0f;
 		float			textureResize = 1.0f;
 		// ‘≤÷˘ÃÂ≈‰÷√
@@ -92,7 +93,7 @@ private:
 	static void GenerateColumnVertex(glm::vec3 start, glm::vec3 end,
 		std::vector<CMesh::S_VERTEX>& vertices, std::vector<unsigned int>& indices, float radius = 1.0f, int sectors = 32,
 		const glm::vec4& sColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f), const glm::vec4& eColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-private:
+public:
 	bool					m_ok;
 	S_MODEL_DESC			m_desc;
 private:

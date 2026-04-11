@@ -23,6 +23,7 @@ public:
 	static void PrintLog(const char* file, const char* func, int line, const char* fmt, ...);
 	static std::string GetCurrentDateTime();
 	static std::string GetPathParentPath(const std::string& strPath);
+	static std::string GetPathFileName(const std::string& strPath);
 	static std::string GetSolutionPathDir();
 	static std::string GetProjectPathDir();
 	static std::string GetRootPathDir();

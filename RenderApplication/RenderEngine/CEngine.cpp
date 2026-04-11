@@ -54,19 +54,19 @@ bool CEngine::SetLoader(GLADloadproc loader)
 	return true;
 }
 
-
 bool CEngine::LoadModel(const char* path)
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
-	desc.strName = path;
+	desc.strName = CUtils::GetPathFileName(path);
+	desc.strPath = path;
 	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(CModel::E_MODEL_FILE, desc);
 	if (nullptr == FileModel) {
 		PRINTLOG("Fail to load Model(%s)", path);
 		return false;
 	}
 	
-	//(void)SceneGraph::GetInstance().CreateModel(*FileModel.get());
+	(void)SceneGraph::GetInstance().CreateModel(*FileModel.get());
 	return true;
 }
 
@@ -87,6 +87,7 @@ bool CEngine::CreateModelChess()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
+	desc.strName = "CHESS";
 	desc.vertexResize = 10.0f;
 	desc.textureResize = 20.0f;
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_CHESS, desc);
@@ -102,6 +103,7 @@ bool CEngine::CreateModelColumn()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
+	desc.strName = "COLUMN";
 	desc.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
 	desc.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 5.0f, 0.0f);
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, desc);
@@ -117,6 +119,7 @@ bool CEngine::CreateModelSphere()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
+	desc.strName = "SPHERE";
 	desc.S_MODEL_SPHERE_DESC.center = glm::vec3(0.0f);
 	desc.S_MODEL_SPHERE_DESC.radius = 4.0f;
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_SPHERE, desc);
@@ -132,6 +135,7 @@ bool CEngine::CreateModelCone()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
+	desc.strName = "CONE";
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_CONE, desc);
 	if (nullptr == Model) {
 		PRINTLOG("Fail to load Model");
@@ -145,6 +149,7 @@ bool CEngine::CreateModelTorus()
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
+	desc.strName = "TORUS";
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_TORUS, desc);
 	if (nullptr == Model) {
 		PRINTLOG("Fail to load Model");
@@ -168,6 +173,7 @@ entt::entity CEngine::CreateCoordinateAxesX()
 {
 	// 坐标轴圆柱体
 	CModel::S_MODEL_DESC descColumn;
+	descColumn.strName = "COLUMN_X";
 	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
 	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(5.0f, 0.0f, 0.0f);
 	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
@@ -181,6 +187,7 @@ entt::entity CEngine::CreateCoordinateAxesX()
 	entt::entity entityColumn = SceneGraph::GetInstance().CreateModel(*AxesXColumn.get());
 
 	CModel::S_MODEL_DESC descArrow;
+	descArrow.strName = "CONE_X";
 	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
 	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
@@ -200,6 +207,7 @@ entt::entity CEngine::CreateCoordinateAxesY()
 {
 	// 坐标轴圆柱体
 	CModel::S_MODEL_DESC descColumn;
+	descColumn.strName = "COLUMN_Y";
 	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
 	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 5.0f, 0.0f);
 	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
@@ -213,6 +221,7 @@ entt::entity CEngine::CreateCoordinateAxesY()
 	entt::entity entityColumn = SceneGraph::GetInstance().CreateModel(*AxesXColumn.get());
 
 	CModel::S_MODEL_DESC descArrow;
+	descArrow.strName = "CONE_Y";
 	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
 	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
@@ -232,6 +241,7 @@ entt::entity CEngine::CreateCoordinateAxesZ()
 {
 	// 坐标轴圆柱体
 	CModel::S_MODEL_DESC descColumn;
+	descColumn.strName = "COLUMN_Z";
 	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
 	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 0.0f, 5.0f);
 	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
@@ -245,6 +255,7 @@ entt::entity CEngine::CreateCoordinateAxesZ()
 	entt::entity entityColumn = SceneGraph::GetInstance().CreateModel(*AxesXColumn.get());
 
 	CModel::S_MODEL_DESC descArrow;
+	descArrow.strName = "CONE_Z";
 	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
 	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;

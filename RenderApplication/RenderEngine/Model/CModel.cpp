@@ -8,7 +8,7 @@ CModel::CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc)
     m_desc = desc;
     switch (type) {
     case E_MODEL_FILE:
-        m_ok = LoadModel(m_desc.strName);
+        m_ok = LoadModel(m_desc.strPath);
         break;
     case E_MODEL_CHESS:
         m_ok = InitializeChess();

@@ -19,6 +19,7 @@ private:
 	}S_CONTEXT;
 public:
 	void RenderGraph(const SceneGraph& scene, const std::string& strPath);
+private:
 	void RenderToDot(const S_CONTEXT& cxt, const std::string& strPath);
 	void RenderToSvg(const S_CONTEXT& cxt, const std::string& strPath);
 private:
