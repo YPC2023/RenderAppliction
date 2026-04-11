@@ -2,6 +2,8 @@
 #include <stdarg.h>
 #include <fstream>
 #include <sstream>
+#include <chrono>
+#include <ctime>
 #include <Windows.h>
 
 void CUtils::PrintLog(const char* file, const char* func, int line, const char* fmt, ...)
@@ -9,10 +11,35 @@ void CUtils::PrintLog(const char* file, const char* func, int line, const char* 
     // 格式化用户消息
     va_list args;
     va_start(args, fmt);
-    fprintf(stdout, "%s:%s(%d)", file, func, line);
+    fprintf(stdout, "[%s] %s:%s(%d)", GetCurrentDateTime().c_str(), file, func, line);
     vfprintf(stdout, fmt, args);
     fprintf(stdout, "\n");
     va_end(args);
+}
+
+std::string CUtils::GetCurrentDateTime()
+{
+    // 1. 获取当前系统时间点
+    auto now = std::chrono::system_clock::now();
+
+    // 2. 转换为 time_t (秒级时间戳)
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+
+    // 3. 转换为本地时间结构体 (std::tm)
+    std::tm bt{};
+
+#if defined(_MSC_VER) // Windows (MSVC)
+    localtime_s(&bt, &now_c);
+#else // Linux / Unix / macOS (GCC/Clang)
+    localtime_r(&now_c, &bt);
+#endif
+
+    // 4. 格式化为字符串
+    char buf[64];
+    // %Y-%m-%d %H:%M:%S 对应：年-月-日 时:分:秒
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &bt);
+
+    return std::string(buf);
 }
 
 std::string CUtils::GetPathParentPath(const std::string& strPath)
@@ -145,5 +172,12 @@ std::string CUtils::IntToString(int value)
 {
     char szBuf[20] = { 0 };
     sprintf(szBuf, "%d", value);
+    return szBuf;
+}
+
+std::string CUtils::FloatToString(float value)
+{
+    char szBuf[50] = { 0 };
+    sprintf(szBuf, "%f", value);
     return szBuf;
 }

@@ -71,7 +71,13 @@ inja::json Graphviz::ModelToInjaJson(const S_CONTEXT& cxt, entt::entity entity)
 	ASSERT(cxt.scene.HaveComponent<SGCmpnt::S_CMPNT_MODEL>(entity));
 
 	const auto& Relation = cxt.scene.GetCmpntRelationTransform(entity);
+	const auto& Model = cxt.scene.GetCmpntModel(entity);
 
+	std::string strName = (Model.strName.empty() ? "MODEL_INFO" : Model.strName);
+	strName += "[";
+	strName += CUtils::UintToString((unsigned int)entity);
+	strName += "]";
+	json["name"] = strName;
 	json["parent"] = Relation.parent;
 	json["transform_id"] = Relation.transform_id;
 	json["selected_id"] = Relation.selected_id;
@@ -94,6 +100,11 @@ inja::json Graphviz::MeshToInjaJson(const S_CONTEXT& cxt, entt::entity entity)
 
 	const auto& Relation = cxt.scene.GetCmpntRelationTransform(entity);
 
+	std::string strName = "MODEL_INFO";
+	strName += "[";
+	strName += CUtils::UintToString((unsigned int)entity);
+	strName += "]";
+	json["name"] = strName;
 	json["parent"] = Relation.parent;
 	json["transform_id"] = Relation.transform_id;
 	json["selected_id"] = Relation.selected_id;

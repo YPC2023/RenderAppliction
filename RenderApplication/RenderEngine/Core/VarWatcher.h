@@ -6,7 +6,7 @@ template<typename T>
 class VarWatcher {
 public:
     // 回调函数类型：参数为旧值和新值
-    using Callback = std::function<void(const T& old_value, const T& new_value)>;
+    using Callback = std::function<void(const T& old_value, const T& new_value, void* payload)>;
 
     // 构造函数：初始化变量值，并可选地设置回调
     explicit VarWatcher(const T& initial_value, Callback callback = nullptr)
@@ -19,7 +19,7 @@ public:
         T old_value = std::move(value_);
         value_ = new_value;
         if (callback_) {
-            callback_(old_value, value_);
+            callback_(old_value, value_, payload_);
         }
     }
 
@@ -32,8 +32,12 @@ public:
     void setCallback(Callback callback) {
         callback_ = std::move(callback);
     }
-
+    // 设置Payload
+    void setPayload(void* payload) {
+        payload_ = payload;
+    }
 private:
     T value_;
     Callback callback_;
+    void* payload_;
 };

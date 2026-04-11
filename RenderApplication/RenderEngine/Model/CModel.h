@@ -23,7 +23,7 @@ public:
 	}E_MODEL_TYPE;
 	typedef struct _S_MODEL_DESC
 	{
-		std::string		strPath = "";
+		std::string		strName = "";
 		float			vertexResize = 1.0f;
 		float			textureResize = 1.0f;
 		// ‘≤÷˘ÃÂ≈‰÷√
@@ -99,6 +99,6 @@ private:
 	std::string				m_strRootPath;
 	bool					m_bAutoRecycle;
 public:
-	std::string				m_strPath;
+	std::string				m_strName;
 	std::vector<CMesh>		m_vec_mesh;
 };

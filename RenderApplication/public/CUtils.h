@@ -21,6 +21,7 @@ public:
 	}S_RECT;
 public:
 	static void PrintLog(const char* file, const char* func, int line, const char* fmt, ...);
+	static std::string GetCurrentDateTime();
 	static std::string GetPathParentPath(const std::string& strPath);
 	static std::string GetSolutionPathDir();
 	static std::string GetProjectPathDir();
@@ -40,5 +41,6 @@ public:
 	static S_RECT GetScreenSize();
 	static std::string UintToString(unsigned int value);
 	static std::string IntToString(int value);
+	static std::string FloatToString(float value);
 };
 

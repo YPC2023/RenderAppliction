@@ -59,7 +59,7 @@ bool CEngine::LoadModel(const char* path)
 {
 	// 从文件加载模型文件
 	CModel::S_MODEL_DESC desc;
-	desc.strPath = path;
+	desc.strName = path;
 	std::shared_ptr<CModel> FileModel = CModelLoader::LoadModel(CModel::E_MODEL_FILE, desc);
 	if (nullptr == FileModel) {
 		PRINTLOG("Fail to load Model(%s)", path);

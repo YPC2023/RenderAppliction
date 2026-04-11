@@ -8,7 +8,7 @@ CModel::CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc)
     m_desc = desc;
     switch (type) {
     case E_MODEL_FILE:
-        m_ok = LoadModel(m_desc.strPath);
+        m_ok = LoadModel(m_desc.strName);
         break;
     case E_MODEL_CHESS:
         m_ok = InitializeChess();
@@ -26,6 +26,7 @@ CModel::CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc)
         m_ok = InitializeTorus();
         break;
     }
+    m_strName = desc.strName;
 }
 
 bool CModel::LoadModel(const std::string& strPath)

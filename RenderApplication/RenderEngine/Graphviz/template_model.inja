@@ -2,7 +2,7 @@
 	<tr>
 		<td bgcolor="#333333" colspan="2">
 			<font color="white">
-				<b>MODEL_INFO</b>
+				<b>{{name}}</b>
 			</font>
 		</td>
 	</tr>

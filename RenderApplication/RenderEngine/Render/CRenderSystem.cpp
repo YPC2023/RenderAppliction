@@ -2,29 +2,13 @@
 #include "../Model/CModel.h"
 #include <CUtils.h>
 
-bool		CRenderSystem::m_bNeed_Initialize = true;
-
-void CRenderSystem::Initialize(CRenderContext& context, SceneGraph& scene)
-{
-	SetNeedInitialFlag(true);
-	//std::string strDetail = SceneGraph::GetInstance().GetRelationDetail();
-	//PRINTLOG("%s", strDetail.c_str());
-	// 旋转最顶层根节点
-	//(void)GetTopNode(scene);
-	
-	// 计算拓扑排序
-	//(void)GetTopologyOrder(scene);
-
-	SetNeedInitialFlag(false);
-}
-
-void CRenderSystem::Update(SceneGraph& scene)
+void CRenderSystem::Update(const CRenderContext& context, SceneGraph& scene)
 {
 	// 更新model层节点
-	UpdateModel(scene);
+	UpdateModel(context, scene);
 
 	// 更新mesh层节点
-	UpdateMesh(scene);
+	UpdateMesh(context, scene);
 
 	//std::string strDetail = scene.GetRelationDetail();
 	//PRINTLOG("%s", strDetail.c_str());
@@ -34,14 +18,24 @@ void CRenderSystem::Render(const CRenderContext& context, const SceneGraph& scen
 {
 	const auto view = scene.QueryComponentes<SGCmpnt::S_CMPNT_MESH>();
 	for (auto entity : view) {
+		const auto& Relation = scene.GetCmpntRelationTransform(entity);
+		/*
+		if (0 < context.m_set_SelectedId.size() && 0 >= context.m_set_SelectedId.count(Relation.selected_id)) {
+			continue;
+		}
+		*/
+		if (22 != (unsigned int)Relation.selected_id) {
+			//continue;
+		}
 		RenderMesh(context, scene, entity);
 	}
 }
 
-void CRenderSystem::UpdateModel(SceneGraph& scene)
+void CRenderSystem::UpdateModel(const CRenderContext& context, SceneGraph& scene)
 {
 	const std::vector<entt::entity> vecModel = scene.GetModelTopologyComponents();
 	for (auto entity : vecModel) {
+		const entt::entity camera_id = context.m_Camera->GetModelId();
 		// 查询节点的“关系”组件
 		auto& CurrentRelation = scene.GetCmpntRelationTransform(entity);
 		// 查询节点的“变换”组件
@@ -76,7 +70,7 @@ void CRenderSystem::UpdateModel(SceneGraph& scene)
 	}
 }
 
-void CRenderSystem::UpdateMesh(SceneGraph& scene)
+void CRenderSystem::UpdateMesh(const CRenderContext& context, SceneGraph& scene)
 {
 	const std::vector<entt::entity> vecModel = scene.GetMeshTopologyComponents();
 	for (auto entity : vecModel) {
@@ -138,6 +132,7 @@ void CRenderSystem::RenderMesh(const CRenderContext& context,
 	const auto& Transform = scene.GetCmpntTransformData(entity);
 
 	material->m_shader->setMat4("model", Transform.matrix.get());
+	//PrintMat4(Transform.matrix.get());
 	// 激活纹理
 	ActiveTexture(context, material, mesh);
 
@@ -190,12 +185,44 @@ void CRenderSystem::SetRenderId(const CRenderContext& context,
 	material->m_shader->setVec4("objectID", glm::vec4(v0 / 255, v1 / 255, v2 / 255, v3 / 255));
 }
 
-void CRenderSystem::SetNeedInitialFlag(bool bYes)
+std::string CRenderSystem::FormatVec3(const glm::vec3& value)
 {
-	m_bNeed_Initialize = bYes;
+	std::string strValue = "";
+	strValue += CUtils::FloatToString(value.x);
+	strValue += ",";
+	strValue += CUtils::FloatToString(value.y);
+	strValue += ",";
+	strValue += CUtils::FloatToString(value.z);
+	return strValue;
 }
 
-bool CRenderSystem::IsNeedInitialize()
+std::string CRenderSystem::FormatVec4(const glm::vec4& value)
 {
-	return m_bNeed_Initialize;
+	std::string strValue = "";
+	strValue += CUtils::FloatToString(value.x);
+	strValue += ",";
+	strValue += CUtils::FloatToString(value.y);
+	strValue += ",";
+	strValue += CUtils::FloatToString(value.z);
+	strValue += ",";
+	strValue += CUtils::FloatToString(value.w);
+	return strValue;
+}
+
+std::string CRenderSystem::FormatMat4(const glm::mat4& value)
+{
+	std::string strValue = "";
+	strValue += FormatVec4(value[0]);
+	strValue += "\n";
+	strValue += FormatVec4(value[1]);
+	strValue += "\n";
+	strValue += FormatVec4(value[2]);
+	strValue += "\n";
+	strValue += FormatVec4(value[3]);
+	return strValue;
+}
+
+void CRenderSystem::PrintMat4(const glm::mat4& value)
+{
+	PRINTLOG("%s", FormatMat4(value).c_str());
 }

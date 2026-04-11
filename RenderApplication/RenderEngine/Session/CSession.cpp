@@ -62,8 +62,7 @@ void CSession::Render()
 	//context.m_Material = m_MaterialRender;
 	context.m_set_SelectedId = m_set_SelectedId;
 	// 跟新位置
-	CRenderSystem::Initialize(context, SceneGraph::GetInstance());
-	CRenderSystem::Update(SceneGraph::GetInstance());
+	CRenderSystem::Update(context, SceneGraph::GetInstance());
 	CRenderSystem::Render(context, SceneGraph::GetInstance());
 
 	m_Framebuffer->UnBind();
@@ -266,8 +265,7 @@ void CSession::OnModelSelectedAction(int x, int y)
 		context.m_Material = m_MaterialSelect;
 		context.m_RenderID = true;
 		// 跟新位置
-		CRenderSystem::Initialize(context, SceneGraph::GetInstance());
-		CRenderSystem::Update(SceneGraph::GetInstance());
+		CRenderSystem::Update(context, SceneGraph::GetInstance());
 		CRenderSystem::Render(context, SceneGraph::GetInstance());
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -402,7 +400,6 @@ void CSession::OnMouseWheel(float delta)
 	if (newScale < 0.1f) newScale = 0.1f;
 	if (newScale > 10.0f) newScale = 10.0f;
 	Transform.scale.set(glm::vec3(newScale, newScale, newScale));
-	//PRINTLOG("%u[%f,%f,%f]", pickedId, Transform.scale.x, Transform.scale.y, Transform.scale.z);
 }
 
 void CSession::OnMouseLeftPress(int x, int y)

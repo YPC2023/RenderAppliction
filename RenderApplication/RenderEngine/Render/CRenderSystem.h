@@ -13,13 +13,12 @@ public:
 		bool						m_RenderID = false;
 	};
 public:
-	static void Initialize(CRenderContext& context, SceneGraph& scene);
-	static void Update(SceneGraph& scene);
+	static void Update(const CRenderContext& context, SceneGraph& scene);
 	static void Render(const CRenderContext& context, const SceneGraph& scene);
 
 private:
-	static void UpdateModel(SceneGraph& scene);
-	static void UpdateMesh(SceneGraph& scene);
+	static void UpdateModel(const CRenderContext& context, SceneGraph& scene);
+	static void UpdateMesh(const CRenderContext& context, SceneGraph& scene);
 
 	static void RenderMesh(const CRenderContext& context, 
 		const SceneGraph& scene, entt::entity entity);
@@ -31,9 +30,10 @@ private:
 	static void SetRenderId(const CRenderContext& context, 
 		std::shared_ptr<CMaterial> material, 
 		entt::entity entity);
+
 private:
-	static void SetNeedInitialFlag(bool bYes = true);
-	static bool IsNeedInitialize();
-private:
-	static bool	m_bNeed_Initialize;
+	static std::string FormatVec3(const glm::vec3& value);
+	static std::string FormatVec4(const glm::vec4& value);
+	static std::string FormatMat4(const glm::mat4& value);
+	static void PrintMat4(const glm::mat4& value);
 };

@@ -245,7 +245,7 @@ entt::entity SceneGraph::CreateModel(const CModel& model)
 {
 	entt::entity entity = CreateNode();
 	
-	(void)AppendComponent<SGCmpnt::S_CMPNT_MODEL>(entity, model.m_strPath);
+	(void)AppendComponent<SGCmpnt::S_CMPNT_MODEL>(entity, model.m_strName);
 	(void)AppendComponent<SGCmpnt::S_CMPNT_RELATION_MESH>(entity);
 	(void)AppendComponent<SGCmpnt::S_CMPNT_TRANSFORM_DATA>(entity);
 	(void)AppendComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(entity);
