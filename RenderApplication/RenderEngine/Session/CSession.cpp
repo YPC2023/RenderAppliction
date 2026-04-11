@@ -376,7 +376,7 @@ void CSession::OnModelRotateActionIng(int x, int y)
 		//PRINTLOG("%f-%f=%f", currentAngle, m_StartRotateAngle, deltaAngle);
 		// E. 构造增量四元数，并叠加到初始姿态上
 		glm::quat deltaQuat = glm::angleAxis(deltaAngle, glm::normalize(m_AxisTransform));
-		Transform.rotation.set(deltaQuat);
+		Transform.rotation.set(deltaQuat * Transform.rotation.get());
 		m_bLeftMouseMoved = true;
 	}
 }
