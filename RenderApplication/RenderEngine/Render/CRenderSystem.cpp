@@ -49,12 +49,12 @@ void CRenderSystem::UpdateModel(SceneGraph& scene)
 		glm::mat4 baseMatrix(1.0f);
 		if (entt::null != CurrentRelation.parent) {
 			const auto& ParentTransform = scene.GetCmpntTransformData(CurrentRelation.parent);
-			baseMatrix = ParentTransform.matrix;
+			baseMatrix = ParentTransform.matrix.get();
 		}
 		// 更新变换矩阵
-		CurrentTransform.matrix = glm::translate(baseMatrix, CurrentTransform.translation);
-		CurrentTransform.matrix = CurrentTransform.matrix * glm::mat4_cast(CurrentTransform.rotation);
-		CurrentTransform.matrix = glm::scale(CurrentTransform.matrix, CurrentTransform.scale);
+		CurrentTransform.matrix.set(glm::translate(baseMatrix, CurrentTransform.translation.get()));
+		CurrentTransform.matrix.set(CurrentTransform.matrix.get() * glm::mat4_cast(CurrentTransform.rotation.get()));
+		CurrentTransform.matrix.set(glm::scale(CurrentTransform.matrix.get(), CurrentTransform.scale.get()));
 
 		// 更新选中的ID
 		if (CurrentRelation.selected_with_parent && entt::null != CurrentRelation.parent) {
@@ -87,11 +87,12 @@ void CRenderSystem::UpdateMesh(SceneGraph& scene)
 		glm::mat4 baseMatrix(1.0f);
 		if (entt::null != CurrentRelation.parent) {
 			const auto& ParentTransform = scene.GetCmpntTransformData(CurrentRelation.parent);
-			baseMatrix = ParentTransform.matrix;
+			baseMatrix = ParentTransform.matrix.get();
 		}
-		CurrentTransform.matrix = glm::translate(baseMatrix, CurrentTransform.translation);
-		CurrentTransform.matrix = CurrentTransform.matrix * glm::mat4_cast(CurrentTransform.rotation);
-		CurrentTransform.matrix = glm::scale(CurrentTransform.matrix, CurrentTransform.scale);
+		// 更新变换矩阵
+		CurrentTransform.matrix.set(glm::translate(baseMatrix, CurrentTransform.translation.get()));
+		CurrentTransform.matrix.set(CurrentTransform.matrix.get()* glm::mat4_cast(CurrentTransform.rotation.get()));
+		CurrentTransform.matrix.set(glm::scale(CurrentTransform.matrix.get(), CurrentTransform.scale.get()));
 
 		// 更新选中的ID
 		auto& CurrentRelationTransform = scene.GetCmpntRelationTransform(entity);
@@ -136,7 +137,7 @@ void CRenderSystem::RenderMesh(const CRenderContext& context,
 	const auto& mesh = scene.GetCmpntMesh(entity);
 	const auto& Transform = scene.GetCmpntTransformData(entity);
 
-	material->m_shader->setMat4("model", Transform.matrix);
+	material->m_shader->setMat4("model", Transform.matrix.get());
 	// 激活纹理
 	ActiveTexture(context, material, mesh);
 

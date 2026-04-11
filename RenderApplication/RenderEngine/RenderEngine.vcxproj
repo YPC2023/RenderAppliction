@@ -115,6 +115,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/wd4819 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,6 +151,7 @@
     <ClInclude Include="Core\ConfigSystem.h" />
     <ClInclude Include="Core\Define.h" />
     <ClInclude Include="Core\SourceHandle.h" />
+    <ClInclude Include="Core\VarWatcher.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Graphviz\Graphviz.h" />
     <ClInclude Include="IEngineInterface.h" />

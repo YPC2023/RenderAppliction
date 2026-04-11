@@ -302,7 +302,7 @@ void CSession::OnModelTranslateActionBegin(int x, int y)
 	}
 	auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(pickedId);
 
-	m_ModelPosition = Transform.translation;
+	m_ModelPosition = Transform.translation.get();
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	m_StartPosition = GetMovementOnAxis(rayDir, m_camera->GetPosition(), m_ModelPosition, m_AxisTransform);
 }
@@ -325,7 +325,7 @@ void CSession::OnModelTranslateActionIng(int x, int y)
 	m_bLeftMouseMoved = true;
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	float current = GetMovementOnAxis(rayDir, m_camera->GetPosition(), m_ModelPosition, m_AxisTransform);
-	Transform.translation = m_ModelPosition + m_AxisTransform * (m_StartPosition - current);
+	Transform.translation.set(m_ModelPosition + m_AxisTransform * (m_StartPosition - current));
 }
 
 void CSession::OnModelRotateActionBegin(int x, int y)
@@ -341,7 +341,7 @@ void CSession::OnModelRotateActionBegin(int x, int y)
 
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	glm::vec3 intersection;
-	m_ModelPosition = Transform.translation;
+	m_ModelPosition = Transform.translation.get();
 
 	if (GetRayPlaneIntersection(m_camera->GetPosition(), rayDir, m_ModelPosition, m_AxisTransform, intersection)) {
 		// A. 保存点击时的初始方位角
@@ -378,7 +378,7 @@ void CSession::OnModelRotateActionIng(int x, int y)
 		//PRINTLOG("%f-%f=%f", currentAngle, m_StartRotateAngle, deltaAngle);
 		// E. 构造增量四元数，并叠加到初始姿态上
 		glm::quat deltaQuat = glm::angleAxis(deltaAngle, glm::normalize(m_AxisTransform));
-		Transform.rotation = deltaQuat;
+		Transform.rotation.set(deltaQuat);
 		m_bLeftMouseMoved = true;
 	}
 }
@@ -397,11 +397,11 @@ void CSession::OnMouseWheel(float delta)
 	// 前滚放大(delta>0)，后滚缩小(delta<0)
 	float scaleDelta = delta * 0.1f;
 
-	glm::vec3 currentScale = Transform.scale;
+	glm::vec3 currentScale = Transform.scale.get();
 	float newScale = currentScale.x + scaleDelta;
 	if (newScale < 0.1f) newScale = 0.1f;
 	if (newScale > 10.0f) newScale = 10.0f;
-	Transform.scale = glm::vec3(newScale, newScale, newScale);
+	Transform.scale.set(glm::vec3(newScale, newScale, newScale));
 	//PRINTLOG("%u[%f,%f,%f]", pickedId, Transform.scale.x, Transform.scale.y, Transform.scale.z);
 }
 

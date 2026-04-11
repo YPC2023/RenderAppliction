@@ -7,6 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "../Core/VarWatcher.h"
 #include "../Material/CMaterialSystem.h"
 
 namespace SGCmpnt
@@ -25,11 +26,11 @@ namespace SGCmpnt
 	};
 	struct S_CMPNT_TRANSFORM_DATA
 	{
-		glm::vec3				translation = glm::vec3(0.0f);
-		glm::quat				rotation = glm::vec3(0.0f);
-		glm::vec3				scale = glm::vec3(1.0f);
+		VarWatcher<glm::vec3>	translation = VarWatcher<glm::vec3>(glm::vec3(0.0f));
+		VarWatcher<glm::quat>	rotation = VarWatcher<glm::quat>(glm::vec3(0.0f));
+		VarWatcher<glm::vec3>	scale = VarWatcher<glm::vec3>(glm::vec3(1.0f));
 		bool					dirty = true;
-		glm::mat4				matrix = glm::mat4(1.0f);
+		VarWatcher<glm::mat4>	matrix = VarWatcher<glm::mat4>(glm::mat4(1.0f));
 	};
 	struct S_CMPNT_MODEL
 	{
