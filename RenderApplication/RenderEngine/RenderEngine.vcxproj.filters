@@ -176,5 +176,7 @@
     <None Include="..\resources\shader\model.vs" />
     <None Include="Material\glsl\template.fs" />
     <None Include="Material\glsl\template.vs" />
+    <None Include="Graphviz\template_mesh.inja" />
+    <None Include="Graphviz\template_model.inja" />
   </ItemGroup>
 </Project>

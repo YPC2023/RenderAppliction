@@ -19,6 +19,12 @@ private:
 	}S_CONTEXT;
 public:
 	void RenderGraph(const SceneGraph& scene, const std::string& strPath);
+	void RenderToDot(const S_CONTEXT& cxt, const std::string& strPath);
+	void RenderToSvg(const S_CONTEXT& cxt, const std::string& strPath);
+private:
+	std::string RenderContent(const std::string& strPath, const inja::json& data);
+	inja::json ModelToInjaJson(const S_CONTEXT& cxt, entt::entity entity);
+	inja::json MeshToInjaJson(const S_CONTEXT& cxt, entt::entity entity);
 private:
 	std::string GetModelContent(const S_CONTEXT& cxt, entt::entity entity);
 	std::string GetMeshContent(const S_CONTEXT& cxt, entt::entity entity);

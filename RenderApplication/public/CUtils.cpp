@@ -75,6 +75,16 @@ std::string CUtils::GetShaderPathFile(const std::string& strName)
     return GetShaderPathDir() + strName;
 }
 
+std::string CUtils::GetGraphvizPathDir()
+{
+    return GetProjectPathDir() + "Graphviz/";
+}
+
+std::string CUtils::GetGraphvizTemplatePathFile(const std::string& strName)
+{
+    return GetGraphvizPathDir() + strName;
+}
+
 bool CUtils::DirExists(const char* path)
 {
     DWORD ftyp = GetFileAttributesA(path);

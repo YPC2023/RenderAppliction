@@ -32,6 +32,8 @@ public:
 	static std::string GetImagePathFile(const std::string& strName);
 	static std::string GetModelPathFile(const std::string& strName);
 	static std::string GetShaderPathFile(const std::string& strName);
+	static std::string GetGraphvizPathDir();
+	static std::string GetGraphvizTemplatePathFile(const std::string& strName);
 	static bool DirExists(const char* path);
 	static bool FileExists(const char* path);
 	static std::string RendFile(const char* path);
