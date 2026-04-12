@@ -39,7 +39,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create CoordinateAxes");
 		return false;
 	} 
-	
+	*/
 	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
 		return false;
@@ -61,7 +61,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create torus model");
 		return false;
 	}
-	*/
+	
 	return true;
 }
 
@@ -134,7 +134,8 @@ bool CEngine::CreateModelColumn()
 	CModel::S_MODEL_DESC desc;
 	desc.strName = "COLUMN";
 	desc.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
-	desc.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 5.0f, 0.0f);
+	desc.S_MODEL_COLUMN_DESC.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+	desc.S_MODEL_COLUMN_DESC.length = 5.0f;
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, desc);
 	if (nullptr == Model) {
 		PRINTLOG("Fail to load Model");
@@ -204,7 +205,8 @@ entt::entity CEngine::CreateCoordinateAxesX()
 	CModel::S_MODEL_DESC descColumn;
 	descColumn.strName = "COLUMN_X";
 	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
-	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(5.0f, 0.0f, 0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.normal = glm::vec3(1.0f, 0.0f, 0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.length = 5.0f;
 	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
 	descColumn.S_MODEL_COLUMN_DESC.sColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	descColumn.S_MODEL_COLUMN_DESC.eColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -217,8 +219,9 @@ entt::entity CEngine::CreateCoordinateAxesX()
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.strName = "CONE_X";
-	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
-	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.start + 
+		glm::normalize(descColumn.S_MODEL_COLUMN_DESC.normal) * descColumn.S_MODEL_COLUMN_DESC.length;
+	descArrow.S_MODEL_CONE_DESC.axisDir = descColumn.S_MODEL_COLUMN_DESC.normal;
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;
@@ -238,7 +241,8 @@ entt::entity CEngine::CreateCoordinateAxesY()
 	CModel::S_MODEL_DESC descColumn;
 	descColumn.strName = "COLUMN_Y";
 	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
-	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 5.0f, 0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+	descColumn.S_MODEL_COLUMN_DESC.length = 5.0f;
 	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
 	descColumn.S_MODEL_COLUMN_DESC.sColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 	descColumn.S_MODEL_COLUMN_DESC.eColor = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
@@ -251,8 +255,9 @@ entt::entity CEngine::CreateCoordinateAxesY()
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.strName = "CONE_Y";
-	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
-	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.start + 
+		glm::normalize(descColumn.S_MODEL_COLUMN_DESC.normal) * descColumn.S_MODEL_COLUMN_DESC.length;
+	descArrow.S_MODEL_CONE_DESC.axisDir = descColumn.S_MODEL_COLUMN_DESC.normal;
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;
@@ -272,7 +277,8 @@ entt::entity CEngine::CreateCoordinateAxesZ()
 	CModel::S_MODEL_DESC descColumn;
 	descColumn.strName = "COLUMN_Z";
 	descColumn.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f);
-	descColumn.S_MODEL_COLUMN_DESC.end = glm::vec3(0.0f, 0.0f, 5.0f);
+	descColumn.S_MODEL_COLUMN_DESC.normal = glm::vec3(0.0f, 0.0f, 1.0f);
+	descColumn.S_MODEL_COLUMN_DESC.length = 5.0f;
 	descColumn.S_MODEL_COLUMN_DESC.radius = 0.05f;
 	descColumn.S_MODEL_COLUMN_DESC.sColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 	descColumn.S_MODEL_COLUMN_DESC.eColor = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
@@ -285,8 +291,9 @@ entt::entity CEngine::CreateCoordinateAxesZ()
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.strName = "CONE_Z";
-	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
-	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.start +
+		glm::normalize(descColumn.S_MODEL_COLUMN_DESC.normal) * descColumn.S_MODEL_COLUMN_DESC.length;
+	descArrow.S_MODEL_CONE_DESC.axisDir = descColumn.S_MODEL_COLUMN_DESC.normal;
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;

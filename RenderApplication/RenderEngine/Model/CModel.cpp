@@ -226,9 +226,11 @@ bool CModel::InitializeColumn()
     std::vector<CMesh::S_VERTEX>	vertices;
     std::vector<CMesh::S_TEXTURE>	textures;
     std::vector<unsigned int>	indices;
+    glm::vec3 end = m_desc.S_MODEL_COLUMN_DESC.start + 
+        glm::normalize(m_desc.S_MODEL_COLUMN_DESC.normal) * 
+        m_desc.S_MODEL_COLUMN_DESC.length;
     GenerateColumnVertex(m_desc.S_MODEL_COLUMN_DESC.start, 
-        m_desc.S_MODEL_COLUMN_DESC.end, 
-        vertices, indices, 
+        end, vertices, indices, 
         m_desc.S_MODEL_COLUMN_DESC.radius, 
         m_desc.S_MODEL_COLUMN_DESC.sectors,
         m_desc.S_MODEL_COLUMN_DESC.sColor,

@@ -31,9 +31,10 @@ public:
 		struct _S_MODEL_COLUMN_DESC
 		{
 			glm::vec3 start = glm::vec3(0.0f);
-			glm::vec3 end = glm::vec3(1.0f, 0.0f, 0.0f);
+			glm::vec3 normal = glm::vec3(1.0f, 0.0f, 0.0f);
 			glm::vec4 sColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 			glm::vec4 eColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			float length = 1.0f;
 			float radius = 1.0f;
 			int sectors = 32;
 		}S_MODEL_COLUMN_DESC;

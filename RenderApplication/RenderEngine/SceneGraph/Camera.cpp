@@ -98,19 +98,34 @@ void Camera::CreateModel()
 {
     CModel::S_MODEL_DESC desc;
     desc.strName = "Camera";
-    desc.S_MODEL_COLUMN_DESC.start = m_Position;
-    float distance = 1.0f;
-    glm::vec3 moveVector = glm::normalize(m_Position - m_Target) * distance;
-    desc.S_MODEL_COLUMN_DESC.end = desc.S_MODEL_COLUMN_DESC.start + moveVector;
+    //desc.S_MODEL_COLUMN_DESC.start = m_Position;
+    //desc.S_MODEL_COLUMN_DESC.normal = glm::normalize(m_Position - m_Target);
+    //desc.S_MODEL_COLUMN_DESC.length = 1.0f;
 
     std::shared_ptr<CModel> model = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, desc);
-
+    if (nullptr == model) {
+        PRINTLOG("Fail to create camera model");
+        return;
+    }
     m_ModelId = SceneGraph::GetInstance().CreateModel(*model.get());
 
     
-    auto& Tranform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
-    Tranform.matrix.setCallback(Callback);
-    Tranform.matrix.setPayload((void*)this);
+    // 计算旋转向量
+    glm::vec3 zAxis = glm::normalize(m_Position - m_Target); // 摄像机正后方 (+Z)
+    glm::vec3 xAxis = glm::normalize(glm::cross(m_Up, zAxis)); // 摄像机右方 (+X)
+    glm::vec3 yAxis = glm::cross(zAxis, xAxis); // 摄像机上方 (+Y)
+    glm::mat3 rotationMat;
+    rotationMat[0] = xAxis; // 第一列
+    rotationMat[1] = yAxis; // 第二列
+    rotationMat[2] = zAxis; // 第三列
+    // 直接转换为四元数
+    glm::quat rotationQuat = glm::quat_cast(rotationMat);
+    
+    auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
+    Transform.translation.set(m_Position);
+    Transform.rotation.set(rotationQuat);
+    Transform.matrix.setCallback(Callback);
+    Transform.matrix.setPayload((void*)this);
 }
 
 void Camera::Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload)

@@ -125,5 +125,4 @@ void CoordinateSystem::Callback(const glm::mat4& old_value, const glm::mat4& new
 		return;
 	}
 	CoordinateSystem* p = (CoordinateSystem*)payload;
-	PRINTLOG("%p", p);
 }

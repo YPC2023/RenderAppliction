@@ -31,13 +31,12 @@ void CoordinateAxes::SetTransformData(const SGCmpnt::S_CMPNT_TRANSFORM_DATA& Dat
 
 entt::entity CoordinateAxes::SetupCoordinateAxes()
 {
-	glm::vec3 start = m_desc.start;
-	glm::vec3 end = m_desc.start + (m_desc.length * glm::normalize(m_desc.normal));
 	// ×ø±êÖáÔ²ÖùÌå
 	CModel::S_MODEL_DESC descColumn;
 	descColumn.strName = (std::string("COLUMN_") + m_strName);
-	descColumn.S_MODEL_COLUMN_DESC.start = start;
-	descColumn.S_MODEL_COLUMN_DESC.end = end;
+	descColumn.S_MODEL_COLUMN_DESC.start = m_desc.start;
+	descColumn.S_MODEL_COLUMN_DESC.normal = m_desc.normal;
+	descColumn.S_MODEL_COLUMN_DESC.length = m_desc.length;
 	descColumn.S_MODEL_COLUMN_DESC.radius = m_desc.radius;
 	descColumn.S_MODEL_COLUMN_DESC.sColor = m_desc.color;
 	descColumn.S_MODEL_COLUMN_DESC.eColor = m_desc.color;
@@ -50,8 +49,9 @@ entt::entity CoordinateAxes::SetupCoordinateAxes()
 
 	CModel::S_MODEL_DESC descArrow;
 	descArrow.strName = (std::string("CONE_") + m_strName);
-	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.end;
-	descArrow.S_MODEL_CONE_DESC.axisDir = (descColumn.S_MODEL_COLUMN_DESC.end - descColumn.S_MODEL_COLUMN_DESC.start);
+	descArrow.S_MODEL_CONE_DESC.center = descColumn.S_MODEL_COLUMN_DESC.start +
+		glm::normalize(descColumn.S_MODEL_COLUMN_DESC.normal) * descColumn.S_MODEL_COLUMN_DESC.length;
+	descArrow.S_MODEL_CONE_DESC.axisDir = descColumn.S_MODEL_COLUMN_DESC.normal;
 	descArrow.S_MODEL_CONE_DESC.radius = descColumn.S_MODEL_COLUMN_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.height = descArrow.S_MODEL_CONE_DESC.radius * 2;
 	descArrow.S_MODEL_CONE_DESC.color = descColumn.S_MODEL_COLUMN_DESC.sColor;

@@ -403,7 +403,7 @@ void CSession::OnModelRotateActionIng(int x, int y)
 
 		// D. 计算角度差值
 		float deltaAngle = currentAngle - m_StartRotateAngle;
-		PRINTLOG("%f", deltaAngle);
+		//PRINTLOG("%f", deltaAngle);
 		// E. 构造增量四元数，并叠加到初始姿态上
 		glm::quat deltaQuat = glm::angleAxis(deltaAngle, glm::normalize(m_AxisTransform));
 		Transform.rotation.set(glm::normalize(deltaQuat * Transform.rotation.get()));
@@ -435,7 +435,7 @@ void CSession::OnMouseWheel(float delta)
 void CSession::OnMouseLeftPress(int x, int y)
 {
 	ResetTransformInfo();
-	m_OperatorAction = E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_MOVING;
+	m_OperatorAction = E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_ROTATE;
 	if (E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_MOVING == m_OperatorAction) {
 		OnModelTranslateActionBegin(x, y);
 	}
