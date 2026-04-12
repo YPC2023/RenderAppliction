@@ -6,13 +6,26 @@ CoordinateAxes::CoordinateAxes(const S_COORDS_DESC& desc, const std::string& str
 	: m_desc(desc), m_strName(strName)
 {
 	m_ModelId = SetupCoordinateAxes();
+	// 给场景图的坐标轴节点设置标志
+	SetupCoordinateFlag();
 }
 
 CoordinateAxes::~CoordinateAxes()
 {
-	std::vector<entt::entity> vecNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
-	for (auto entity : vecNode) {
+	std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
+	for (auto entity : setNode) {
 		SceneGraph::GetInstance().RemoveNode(entity);
+	}
+}
+
+void CoordinateAxes::SetTransformData(const SGCmpnt::S_CMPNT_TRANSFORM_DATA& Data)
+{
+	std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
+	for (auto entity : setNode) {
+		auto& TransformData = SceneGraph::GetInstance().GetCmpntTransformData(entity);
+		TransformData.translation.set(Data.translation.get());
+		TransformData.rotation.set(Data.rotation.get());
+		TransformData.scale.set(Data.scale.get());
 	}
 }
 
@@ -49,5 +62,14 @@ entt::entity CoordinateAxes::SetupCoordinateAxes()
 	}
 	entt::entity entityArrow = SceneGraph::GetInstance().CreateModel(*ArrowModel.get());
 	SceneGraph::GetInstance().BindModel(entityColumn, entityArrow);
+
 	return entityColumn;
+}
+
+void CoordinateAxes::SetupCoordinateFlag()
+{
+	std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
+	for (auto entity : setNode) {
+		SceneGraph::GetInstance().AppendComponent<SGCmpnt::S_CMPNT_COORDINATE_FLAG>(entity);
+	}
 }

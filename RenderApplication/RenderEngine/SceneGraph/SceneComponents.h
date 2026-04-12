@@ -54,4 +54,9 @@ namespace SGCmpnt
 		bool					selected_with_parent = false;	// 伴随父节点被选中
 		entt::entity			selected_id = entt::null;
 	};
+	// 坐标轴标志
+	struct S_CMPNT_COORDINATE_FLAG
+	{
+
+	};
 }

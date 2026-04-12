@@ -33,17 +33,18 @@ void CRenderSystem::UpdateModel(const CRenderContext& context, SceneGraph& scene
 		const entt::entity camera_id = context.m_Camera->GetModelId();
 		// 查询节点的“关系”组件
 		auto& CurrentRelation = scene.GetCmpntRelationTransform(entity);
-		// 查询节点的“变换”组件
-		auto& CurrentTransform = scene.GetCmpntTransformData(entity);
-		glm::mat4 baseMatrix(1.0f);
+		glm::mat4 matrix(1.0f);
 		if (entt::null != CurrentRelation.parent) {
 			const auto& ParentTransform = scene.GetCmpntTransformData(CurrentRelation.parent);
-			baseMatrix = ParentTransform.matrix.get();
+			matrix = ParentTransform.matrix.get();
 		}
+		// 查询节点的“变换”组件
+		auto& CurrentTransform = scene.GetCmpntTransformData(entity);
 		// 更新变换矩阵
-		CurrentTransform.matrix.set(glm::translate(baseMatrix, CurrentTransform.translation.get()));
-		CurrentTransform.matrix.set(CurrentTransform.matrix.get() * glm::mat4_cast(CurrentTransform.rotation.get()));
-		CurrentTransform.matrix.set(glm::scale(CurrentTransform.matrix.get(), CurrentTransform.scale.get()));
+		matrix = glm::translate(matrix, CurrentTransform.translation.get());
+		matrix = matrix * glm::mat4_cast(CurrentTransform.rotation.get());
+		matrix = glm::scale(matrix, CurrentTransform.scale.get());
+		CurrentTransform.matrix.set(matrix);
 
 		// 更新选中的ID
 		if (CurrentRelation.selected_with_parent && entt::null != CurrentRelation.parent) {

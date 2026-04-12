@@ -4,6 +4,7 @@
 #include <entt/entt.hpp>
 #include "../SceneGraph/Camera.h"
 #include "../IEngineInterface.h"
+#include "../Render/CRenderSystem.h"
 #include "../Resource/CResourceManager.h"
 #include "../Material/CMaterialSystem.h"
 #include "../SceneGraph/CoordinateSystem.h"
@@ -52,6 +53,7 @@ private:
 		const glm::vec3& rotationAxis);
 private:
 	void ResetTransformInfo();
+	void ConstructRenderContext(CRenderSystem::CRenderContext& context);
 private:
 	void OnModelSelectedAction(int x, int y);
 	void OnModelTranslateActionBegin(int x, int y);

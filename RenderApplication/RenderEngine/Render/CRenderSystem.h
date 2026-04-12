@@ -1,5 +1,9 @@
 #pragma once
-#include "../Session/CSessionManager.h"
+
+#include <set>
+#include <string>
+#include <memory>
+#include "../SceneGraph/Camera.h"
 #include "../SceneGraph/SceneGraph.h"
 
 class CRenderSystem

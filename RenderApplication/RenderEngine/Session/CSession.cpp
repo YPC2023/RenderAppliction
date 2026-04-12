@@ -2,7 +2,6 @@
 #include <CUtils.h>
 #include "CSessionManager.h"
 #include "../CEngine.h"
-#include "../Render/CRenderSystem.h"
 #include "../Graphviz/Graphviz.h"
 
 CSession::CSession()
@@ -61,19 +60,7 @@ void CSession::Render()
 	}
 
 	CRenderSystem::CRenderContext context;
-	// 坐标系不显示当前渲染
-	std::vector<entt::entity> vecMesh = SceneGraph::GetInstance().GetModelTransformMeshComponents(m_CoordSystem->GetModelId());
-	for (auto entity : vecMesh) {
-		context.m_set_Unvisible.insert(entity);
-	}
-	// 摄像机不显示当前渲染
-	vecMesh = SceneGraph::GetInstance().GetModelTransformMeshComponents(m_camera->GetModelId());
-	for (auto entity : vecMesh) {
-		context.m_set_Unvisible.insert(entity);
-	}
-
-	context.m_Camera = m_camera;
-	context.m_set_SelectedId = m_set_SelectedId;
+	ConstructRenderContext(context);
 	// 跟新位置
 	CRenderSystem::Update(context, SceneGraph::GetInstance());
 	CRenderSystem::Render(context, SceneGraph::GetInstance());
@@ -258,6 +245,27 @@ void CSession::ResetTransformInfo()
 	m_StartRotateAngle = 0.f;
 }
 
+void CSession::ConstructRenderContext(CRenderSystem::CRenderContext& context)
+{
+	// 坐标系不显示当前渲染(查询所有的坐标节点，非自己的节点添加到不显示链表）
+	const auto& view = SceneGraph::GetInstance().QueryComponentes<SGCmpnt::S_CMPNT_COORDINATE_FLAG>();
+	std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_CoordSystem->GetModelId());
+	for (entt::entity entity : view) {
+		if (0 >= setNode.count(entity)) {
+			context.m_set_Unvisible.insert(entity);
+		}
+	}
+	
+	// 摄像机不显示当前渲染
+	setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_camera->GetModelId());
+	for (auto entity : setNode) {
+		context.m_set_Unvisible.insert(entity);
+	}
+
+	context.m_Camera = m_camera;
+	context.m_set_SelectedId = m_set_SelectedId;
+}
+
 void CSession::OnModelSelectedAction(int x, int y)
 {
 	if (nullptr != m_Framebuffer && nullptr != m_camera &&
@@ -280,9 +288,10 @@ void CSession::OnModelSelectedAction(int x, int y)
 		}
 
 		CRenderSystem::CRenderContext context;
-		context.m_Camera = m_camera;
+		ConstructRenderContext(context);
 		context.m_Material = m_MaterialSelect;
 		context.m_RenderID = true;
+
 		// 跟新位置
 		CRenderSystem::Update(context, SceneGraph::GetInstance());
 		CRenderSystem::Render(context, SceneGraph::GetInstance());
@@ -299,6 +308,8 @@ void CSession::OnModelSelectedAction(int x, int y)
 			m_set_SelectedId.insert(selected_id);
 			const auto& RelationTrasfrom = SceneGraph::GetInstance().GetCmpntRelationTransform(selected_id);
 			m_set_TransformId.insert(RelationTrasfrom.transform_id);
+			// 绑定坐标系
+			m_CoordSystem->BindModel(selected_id);
 		}
 		else {
 			m_set_SelectedId.clear();

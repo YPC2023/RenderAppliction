@@ -29,8 +29,8 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-    std::vector<entt::entity> vecNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
-    for (auto entity : vecNode) {
+    std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
+    for (auto entity : setNode) {
         SceneGraph::GetInstance().RemoveNode(entity);
     }
 }

@@ -100,21 +100,21 @@ SGCmpnt::S_CMPNT_RELATION_TRANSFORM& SceneGraph::GetCmpntRelationTransform(entt:
 	return QueryComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(entity);
 }
 
-const std::vector<entt::entity> SceneGraph::GetModelTransformComponents(entt::entity entity) const
+const std::set<entt::entity> SceneGraph::GetModelTransformComponents(entt::entity entity) const
 {
 	ASSERT(HaveComponent<SGCmpnt::S_CMPNT_MODEL>(entity));
 	std::vector<entt::entity> vecModel;
 	// 获取所有Model节点
 	GetModelTopologyComponents(entity, vecModel);
-	std::vector<entt::entity> vecNode;
+	std::set<entt::entity> vecNode;
 	// 遍历Model节点，获取他们的Mesh节点
 	for (auto model : vecModel) {
 		const auto& Relation = GetCmpntRelationMesh(model);
 		// 压入Model节点
-		vecNode.push_back(model);
+		vecNode.insert(model);
 		// 遍历所有mesh节点
 		for (auto mesh : Relation.children) {
-			vecNode.push_back(mesh);
+			vecNode.insert(mesh);
 		}
 	}
 	// 包含Model和Mesh集
