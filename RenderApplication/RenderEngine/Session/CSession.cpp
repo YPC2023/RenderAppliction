@@ -24,6 +24,10 @@ bool CSession::Initialize()
 		PRINTLOG("Fail to initialize Material");
 		return false;
 	}
+	if (!InitializeCoordSystem()) {
+		PRINTLOG("Fail to initialize coordinate system");
+		return false;
+	}
 	// 改为在DllMain里初始化
 	//return CEngine::GetInstance().Initialize();
 	return true;
@@ -490,6 +494,16 @@ bool CSession::InitializeMerterial()
 	m_MaterialSelect = CMaterialSystem::AquireMaterial(desc);
 	if (nullptr == m_MaterialSelect) {
 		PRINTLOG("Fail create select Material");
+		return false;
+	}
+	return true;
+}
+
+bool CSession::InitializeCoordSystem()
+{
+	m_CoordSystem = std::make_shared<CoordinateSystem>();
+	if (nullptr == m_CoordSystem) {
+		PRINTLOG("Fail to create coordinate system");
 		return false;
 	}
 	return true;

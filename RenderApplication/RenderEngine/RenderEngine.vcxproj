@@ -169,6 +169,7 @@
     <ClInclude Include="Resource\CUniformBuffer.h" />
     <ClInclude Include="SceneGraph\Camera.h" />
     <ClInclude Include="SceneGraph\CoordinateAxes.h" />
+    <ClInclude Include="SceneGraph\CoordinateSystem.h" />
     <ClInclude Include="SceneGraph\SceneComponents.h" />
     <ClInclude Include="SceneGraph\SceneGraph.h" />
     <ClInclude Include="Session\CSession.h" />
@@ -241,6 +242,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneGraph\CoordinateAxes.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\CoordinateSystem.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SceneGraph\SceneGraph.cpp">

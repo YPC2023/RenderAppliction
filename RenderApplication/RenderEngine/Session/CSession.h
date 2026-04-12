@@ -6,6 +6,7 @@
 #include "../IEngineInterface.h"
 #include "../Resource/CResourceManager.h"
 #include "../Material/CMaterialSystem.h"
+#include "../SceneGraph/CoordinateSystem.h"
 
 class CSession : public ISessionInterface
 {
@@ -74,6 +75,7 @@ private:
 	bool InitializeCamera();
 	bool InitializeFramebuffer();
 	bool InitializeMerterial();
+	bool InitializeCoordSystem();
 
 private:
 	std::shared_ptr<Camera>			m_camera;
@@ -82,6 +84,7 @@ private:
 	std::shared_ptr<CMaterial>		m_MaterialSelect;
 	std::set<entt::entity>			m_set_SelectedId;
 	std::set<entt::entity>			m_set_TransformId;
+	std::shared_ptr<CoordinateSystem> m_CoordSystem;
 
 
 	bool							m_bLeftMouseMoved;
