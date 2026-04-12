@@ -69,9 +69,6 @@
     <ClInclude Include="CEngine.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CEngineBuilder.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="IEngineInterface.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -158,9 +155,6 @@
     <ClCompile Include="CEngine.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CEngineBuilder.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Render\CRenderSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -183,6 +177,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SceneGraph\CoordinateAxes.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="IEngineInterface.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

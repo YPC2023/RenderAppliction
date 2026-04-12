@@ -11,6 +11,7 @@
 #define ENGINE_API_ACTION __declspec(dllimport)
 #endif
 
+
 class ENGINE_API_ACTION IEngineInterface
 {
 public:
@@ -49,3 +50,10 @@ public:
 public:
 	virtual void OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y) = 0;
 };
+
+
+ENGINE_API_ACTION IEngineInterface* AquireEngine();
+ENGINE_API_ACTION void ReleaseEngine();
+
+ENGINE_API_ACTION ISessionInterface* CreateSession();
+ENGINE_API_ACTION void ReleaseSession(ISessionInterface* pInterface);

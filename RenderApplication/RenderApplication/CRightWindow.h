@@ -1,6 +1,6 @@
 #pragma once
 #include "CWindow.h"
-#include "CEngineBuilder.h"
+#include <IEngineInterface.h>
 
 class CRightWindow : public CWindow
 {

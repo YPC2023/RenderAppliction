@@ -10,7 +10,7 @@ CRenderWindow::CRenderWindow(const std::string& strName): CWindow(strName)
 
 bool CRenderWindow::Initialize()
 {
-	m_pISessionInterface = CEngineBuilder::CreateEngineSession();
+	m_pISessionInterface = CreateSession();
 	if (nullptr == m_pISessionInterface) {
 		PRINTLOG("Fail to create engine session");
 		return false;
@@ -27,6 +27,8 @@ void CRenderWindow::UnInitialize()
 	if (nullptr != m_pISessionInterface) {
 		m_pISessionInterface->UnInitialize();
 	}
+	ReleaseSession(m_pISessionInterface);
+	m_pISessionInterface = nullptr;
 }
 
 void CRenderWindow::OnRender()

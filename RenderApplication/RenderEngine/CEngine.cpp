@@ -4,6 +4,34 @@
 #include "Model/CModelLoader.h"
 #include <CUtils.h>
 
+CEngine* CEngine::m_pInstance = nullptr;
+
+CEngine::CEngine()
+{
+	
+}
+
+CEngine::~CEngine()
+{
+	SceneGraph::GetInstance().Clear();
+}
+
+CEngine& CEngine::GetInstance()
+{
+	if (nullptr == m_pInstance) {
+		m_pInstance = new CEngine();
+	}
+	return *m_pInstance;
+}
+
+void CEngine::ReleaseIntance()
+{
+	if (nullptr != m_pInstance) {
+		delete m_pInstance;
+		m_pInstance = nullptr;
+	}
+}
+
 bool CEngine::Initialize()
 {
 	/*

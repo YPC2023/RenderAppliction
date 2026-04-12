@@ -6,9 +6,19 @@
 #include "Material/CMaterialSystem.h"
 
 
-class CEngine : public IEngineInterface,
-	public ISingletonInterface<CEngine>
+class CEngine : public IEngineInterface
 {
+private:
+	static CEngine* m_pInstance;
+	// 1. 构造函数私有化，禁止外部通过 new 或 栈声明创建对象
+	CEngine();
+	~CEngine();
+public:
+	// 3. 禁用拷贝构造和赋值操作，防止通过副本创建新实例
+	CEngine(const CEngine&) = delete;
+	CEngine& operator=(const CEngine&) = delete;
+	static CEngine& GetInstance();
+	static void ReleaseIntance();
 public:
 	bool Initialize() override;
 	void UnInitialize() override;

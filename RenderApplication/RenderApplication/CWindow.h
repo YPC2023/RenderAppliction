@@ -3,7 +3,7 @@
 #include <CUtils.h>
 #include <imgui.h>
 #include "IWindowInterface.h"
-#include "CEngineBuilder.h"
+#include <IEngineInterface.h>
 
 class CWindow : public IWindowInterface
 {

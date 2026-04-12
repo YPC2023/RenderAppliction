@@ -37,11 +37,13 @@ void CApplicationWindow::UnInitialize()
 	if (nullptr != m_pIEngineInterface) {
 		m_pIEngineInterface->UnInitialize();
 	}
+	ReleaseEngine();
+	m_pIEngineInterface = nullptr;
 }
 
 bool CApplicationWindow::InitializeEngine()
 {
-	m_pIEngineInterface = CEngineBuilder::AquireEngine();
+	m_pIEngineInterface = AquireEngine();
 	if (nullptr == m_pIEngineInterface) {
 		PRINTLOG("Fail to initialize Engine");
 		return false;

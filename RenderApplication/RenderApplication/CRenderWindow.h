@@ -2,7 +2,7 @@
 
 #include <imgui.h>
 #include "CWindow.h"
-#include "CEngineBuilder.h"
+#include <IEngineInterface.h>
 
 class CRenderWindow : public CWindow
 {
