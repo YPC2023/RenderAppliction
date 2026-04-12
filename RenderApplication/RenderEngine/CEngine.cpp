@@ -6,11 +6,12 @@
 
 bool CEngine::Initialize()
 {
+	/*
 	if (!CreateCoordinateAxes()) {
 		PRINTLOG("Fail to create CoordinateAxes");
 		return false;
-	}
-	
+	} 
+	*/
 	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
 		return false;

@@ -38,14 +38,13 @@ void CSession::Render()
 {
 	CSessionManager::SwitchCurrentSession(this);
 
-	if (nullptr == m_Framebuffer) {
+	if (nullptr == m_Framebuffer || nullptr == m_camera) {
 		return;
 	}
 
 	m_Framebuffer->Bind();
 
 	glViewport(0, 0, m_camera->GetWidth(), m_camera->GetHeight());
-
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -92,6 +91,12 @@ bool CSession::MergeModel()
 {
 	CSessionManager::SwitchCurrentSession(this);
 	return CEngine::GetInstance().MergeModel(m_set_SelectedId);
+}
+
+bool CSession::DestroyCamera()
+{
+	m_camera = nullptr;
+	return true;
 }
 
 void CSession::OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y)
@@ -373,10 +378,10 @@ void CSession::OnModelRotateActionIng(int x, int y)
 
 		// D. 计算角度差值
 		float deltaAngle = currentAngle - m_StartRotateAngle;
-		//PRINTLOG("%f-%f=%f", currentAngle, m_StartRotateAngle, deltaAngle);
+		PRINTLOG("%f", deltaAngle);
 		// E. 构造增量四元数，并叠加到初始姿态上
 		glm::quat deltaQuat = glm::angleAxis(deltaAngle, glm::normalize(m_AxisTransform));
-		Transform.rotation.set(deltaQuat * Transform.rotation.get());
+		Transform.rotation.set(glm::normalize(deltaQuat * Transform.rotation.get()));
 		m_bLeftMouseMoved = true;
 	}
 }
@@ -405,7 +410,7 @@ void CSession::OnMouseWheel(float delta)
 void CSession::OnMouseLeftPress(int x, int y)
 {
 	ResetTransformInfo();
-	m_OperatorAction = E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_ROTATE;
+	m_OperatorAction = E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_MOVING;
 	if (E_OPERATOR_ACTION_TYPE::E_OPERATOR_ACTION_MOVING == m_OperatorAction) {
 		OnModelTranslateActionBegin(x, y);
 	}

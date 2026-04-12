@@ -7,6 +7,7 @@ class Camera
 {
 public:
     Camera();
+    ~Camera();
 public:
     void Resize(int width, int height);
 public:
@@ -47,5 +48,5 @@ private:
     glm::mat4   m_View;
     glm::mat4   m_Projection;
 private:
-    entt::entity    m_ModelId;
+    entt::entity                m_ModelId;
 };

@@ -8,6 +8,14 @@ entt::entity SceneGraph::CreateNode()
 	return entity;
 }
 
+void SceneGraph::RemoveNode(entt::entity entity)
+{
+	if (!EntityIsValid(entity)) {
+		return;
+	}
+	m_Registry.destroy(entity);
+}
+
 const SGCmpnt::S_CMPNT_MATERIAL& SceneGraph::GetCmpntMaterial(entt::entity entity) const
 {
 	ASSERT(HaveComponent<SGCmpnt::S_CMPNT_MATERIAL>(entity));
@@ -92,6 +100,27 @@ SGCmpnt::S_CMPNT_RELATION_TRANSFORM& SceneGraph::GetCmpntRelationTransform(entt:
 	return QueryComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(entity);
 }
 
+const std::vector<entt::entity> SceneGraph::GetModelTransformComponents(entt::entity entity) const
+{
+	ASSERT(HaveComponent<SGCmpnt::S_CMPNT_MODEL>(entity));
+	std::vector<entt::entity> vecModel;
+	// 获取所有Model节点
+	GetModelTopologyComponents(entity, vecModel);
+	std::vector<entt::entity> vecNode;
+	// 遍历Model节点，获取他们的Mesh节点
+	for (auto model : vecModel) {
+		const auto& Relation = GetCmpntRelationMesh(model);
+		// 压入Model节点
+		vecNode.push_back(model);
+		// 遍历所有mesh节点
+		for (auto mesh : Relation.children) {
+			vecNode.push_back(mesh);
+		}
+	}
+	// 包含Model和Mesh集
+	return vecNode;
+}
+
 const std::vector<entt::entity> SceneGraph::GetModelTopComponentes() const
 {
 	std::vector<entt::entity> vecNodes;
@@ -107,6 +136,7 @@ const std::vector<entt::entity> SceneGraph::GetModelTopComponentes() const
 
 const void SceneGraph::GetModelTopologyComponents(entt::entity entity, std::vector<entt::entity>& vecNodes) const
 {
+	ASSERT(HaveComponent<SGCmpnt::S_CMPNT_MODEL>(entity));
 	vecNodes.push_back(entity);
 	const auto& Relation = GetCmpntRelationTransform(entity);
 	for (auto child : Relation.children) {
@@ -126,6 +156,7 @@ const std::vector<entt::entity> SceneGraph::GetModelTopologyComponents() const
 
 const void SceneGraph::GetMeshTopologyComponents(entt::entity entity, std::vector<entt::entity>& vecNodes) const
 {
+	ASSERT(HaveComponent<SGCmpnt::S_CMPNT_MODEL>(entity));
 	const auto& MeshRelation = GetCmpntRelationMesh(entity);
 	for (auto child : MeshRelation.children) {
 		vecNodes.push_back(child);

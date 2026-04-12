@@ -26,6 +26,7 @@ public:
 	unsigned int GetRenderTextureId() override;
 	void Resize(int width, int height) override;
 	bool MergeModel() override;
+	bool DestroyCamera() override;
 public:
 	void OnMouseAction(E_MOUSE_BUTTON_TYPE key, E_MOUSE_ACTION_TYPE action, int x, int y) override;
 private:

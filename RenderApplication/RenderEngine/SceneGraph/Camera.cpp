@@ -27,6 +27,14 @@ Camera::Camera()
     SetupCamera();
 }
 
+Camera::~Camera()
+{
+    std::vector<entt::entity> vecNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
+    for (auto entity : vecNode) {
+        SceneGraph::GetInstance().RemoveNode(entity);
+    }
+}
+
 void Camera::Resize(int width, int height)
 {
     m_nWidth = width;
@@ -103,17 +111,6 @@ void Camera::CreateModel()
     auto& Tranform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
     Tranform.matrix.setCallback(Callback);
     Tranform.matrix.setPayload((void*)this);
-    /*
-    desc.S_MODEL_CONE_DESC.center = m_Position;
-    desc.S_MODEL_CONE_DESC.axisDir = glm::normalize(m_Position - m_Target);
-    desc.S_MODEL_CONE_DESC.height = 1.0f;
-    std::shared_ptr<CModel> temp = CModelLoader::LoadModel(CModel::E_MODEL_CONE, desc);
-    m_ModelId = SceneGraph::GetInstance().CreateModel(*temp.get());
-
-    auto& Tranform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
-    Tranform.matrix.setCallback(Callback);
-    Tranform.matrix.setPayload((void*)this);
-    */
 }
 
 void Camera::Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload)

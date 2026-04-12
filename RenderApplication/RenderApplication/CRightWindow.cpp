@@ -25,6 +25,9 @@ void CRightWindow::OnRender()
 	if (ImGui::Button("Merge")) {
 		MergeMode();
 	}
+	if (ImGui::Button("DestroyCamera")) {
+		DestroyCamera();
+	}
 }
 
 void CRightWindow::OnSize(int x, int y)
@@ -41,5 +44,17 @@ void CRightWindow::MergeMode()
 
 	if (!m_pISessionInterface->MergeModel()) {
 		PRINTLOG("Fail to merge model");
+	}
+}
+
+void CRightWindow::DestroyCamera()
+{
+	if (nullptr == m_pISessionInterface) {
+		PRINTLOG("Initialize session interface first. please");
+		return;
+	}
+
+	if (!m_pISessionInterface->DestroyCamera()) {
+		PRINTLOG("Fail to destory camera");
 	}
 }

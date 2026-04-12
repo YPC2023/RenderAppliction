@@ -9,6 +9,7 @@ class SceneGraph : public ISingletonInterface<SceneGraph>
 {
 public:
 	entt::entity CreateNode();
+	void RemoveNode(entt::entity entity);
 	template<typename Type, typename... Args>
 	decltype(auto) AppendComponent(entt::entity entity, Args &&...args)
 	{
@@ -68,10 +69,17 @@ public:
 	const SGCmpnt::S_CMPNT_RELATION_TRANSFORM& GetCmpntRelationTransform(entt::entity entity) const;
 	SGCmpnt::S_CMPNT_RELATION_TRANSFORM& GetCmpntRelationTransform(entt::entity entity);
 public:
+	// 获取entity指定Model的所有Model和Mesh子节点
+	const std::vector<entt::entity> GetModelTransformComponents(entt::entity entity) const;
+	// 获取所有Model的根节点集
 	const std::vector<entt::entity> GetModelTopComponentes() const;
+	// 根据entity指定的Model节点获取他的所有Model节点
 	const void GetModelTopologyComponents(entt::entity entity, std::vector<entt::entity>& vecNodes) const;
+	// 获取场景图里的所有Model节点以及的他们的所有子Model节点
 	const std::vector<entt::entity> GetModelTopologyComponents() const;
+	// 根据entity指定的Model节点获取他的子Mesh节点和子Model的mesh集
 	const void GetMeshTopologyComponents(entt::entity entity, std::vector<entt::entity>& vecNodes) const;
+	// 获取所有的Mesh节点集
 	const std::vector<entt::entity> GetMeshTopologyComponents() const;
 public:
 	void BindModel(entt::entity parent, entt::entity child, bool selected = true);

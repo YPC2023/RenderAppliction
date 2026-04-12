@@ -16,4 +16,5 @@ public:
 	void OnSize(int x, int y) override;
 private:
 	void MergeMode();
+	void DestroyCamera();
 };
