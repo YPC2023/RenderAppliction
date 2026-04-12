@@ -10,6 +10,7 @@ public:
 		std::shared_ptr<CMaterial>	m_Material = nullptr;
 		std::shared_ptr<Camera>		m_Camera = nullptr;
 		std::set<entt::entity>		m_set_SelectedId;
+		std::set<entt::entity>		m_set_Unvisible;	// 当前渲染（session）看不到的对象集
 		bool						m_RenderID = false;
 	};
 public:

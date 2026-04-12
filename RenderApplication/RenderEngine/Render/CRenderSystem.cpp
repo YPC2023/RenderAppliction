@@ -18,14 +18,9 @@ void CRenderSystem::Render(const CRenderContext& context, const SceneGraph& scen
 {
 	const auto view = scene.QueryComponentes<SGCmpnt::S_CMPNT_MESH>();
 	for (auto entity : view) {
-		const auto& Relation = scene.GetCmpntRelationTransform(entity);
-		/*
-		if (0 < context.m_set_SelectedId.size() && 0 >= context.m_set_SelectedId.count(Relation.selected_id)) {
+		// 当前渲染(Session)不允许渲染的Mesh跳过
+		if (0 < context.m_set_Unvisible.count(entity)) {
 			continue;
-		}
-		*/
-		if (22 != (unsigned int)Relation.selected_id) {
-			//continue;
 		}
 		RenderMesh(context, scene, entity);
 	}

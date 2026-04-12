@@ -1,4 +1,5 @@
 #pragma once
+#include <set>
 #include <string>
 #include <entt/entt.hpp>
 #include <ISingletonInterface.h>
@@ -71,6 +72,8 @@ public:
 public:
 	// 获取entity指定Model的所有Model和Mesh子节点
 	const std::vector<entt::entity> GetModelTransformComponents(entt::entity entity) const;
+	// 获取entity指定的Model及子Model对应的Mesh集
+	const std::vector<entt::entity> GetModelTransformMeshComponents(entt::entity entity) const;
 	// 获取所有Model的根节点集
 	const std::vector<entt::entity> GetModelTopComponentes() const;
 	// 根据entity指定的Model节点获取他的所有Model节点

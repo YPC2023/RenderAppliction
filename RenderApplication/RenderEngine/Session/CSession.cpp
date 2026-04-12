@@ -59,10 +59,20 @@ void CSession::Render()
 		ubo->SendData(&m_camera->GetProjection(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, projection));
 		ubo->SendData(&m_camera->GetView(), sizeof(glm::mat4), offsetof(CShader::S_SHADER_MVP_MATRIX, view));
 	}
-	
+
 	CRenderSystem::CRenderContext context;
+	// 坐标系不显示当前渲染
+	std::vector<entt::entity> vecMesh = SceneGraph::GetInstance().GetModelTransformMeshComponents(m_CoordSystem->GetModelId());
+	for (auto entity : vecMesh) {
+		context.m_set_Unvisible.insert(entity);
+	}
+	// 摄像机不显示当前渲染
+	vecMesh = SceneGraph::GetInstance().GetModelTransformMeshComponents(m_camera->GetModelId());
+	for (auto entity : vecMesh) {
+		context.m_set_Unvisible.insert(entity);
+	}
+
 	context.m_Camera = m_camera;
-	//context.m_Material = m_MaterialRender;
 	context.m_set_SelectedId = m_set_SelectedId;
 	// 跟新位置
 	CRenderSystem::Update(context, SceneGraph::GetInstance());

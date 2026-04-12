@@ -121,6 +121,25 @@ const std::vector<entt::entity> SceneGraph::GetModelTransformComponents(entt::en
 	return vecNode;
 }
 
+const std::vector<entt::entity> SceneGraph::GetModelTransformMeshComponents(entt::entity entity) const
+{
+	ASSERT(HaveComponent<SGCmpnt::S_CMPNT_MODEL>(entity));
+	std::vector<entt::entity> vecModel;
+	// 获取所有Model节点
+	GetModelTopologyComponents(entity, vecModel);
+	std::vector<entt::entity> vecMesh;
+	// 遍历Model节点，获取他们的Mesh节点
+	for (auto model : vecModel) {
+		const auto& Relation = GetCmpntRelationMesh(model);
+		// 遍历所有mesh节点
+		for (auto mesh : Relation.children) {
+			vecMesh.push_back(mesh);
+		}
+	}
+	// 包含Model和Mesh集
+	return vecMesh;
+}
+
 const std::vector<entt::entity> SceneGraph::GetModelTopComponentes() const
 {
 	std::vector<entt::entity> vecNodes;
