@@ -36,7 +36,11 @@ private:
     glm::vec3   m_Position;
     glm::vec3   m_Target;
     glm::vec3   m_Up;
-    glm::mat4   m_Matrix;
+
+    glm::vec3   m_position;
+    glm::vec3   m_target;
+    glm::vec3   m_up;
+    glm::mat4   m_matrix;
 
     int     m_nWidth;
     int     m_nHeight;

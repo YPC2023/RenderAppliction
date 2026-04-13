@@ -13,7 +13,7 @@ Camera::Camera()
     m_Position = ConfigSystem::GetCameraPos();
     m_Up = ConfigSystem::GetCameraUp();
     m_Target = ConfigSystem::GetCameraTarget();
-    m_Matrix = glm::mat4(1.0f);
+    m_matrix = glm::mat4(1.0f);
 
     glm::mat4 rollMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(index++ * 130.0f), m_Up);
     m_Position = glm::vec3(rollMatrix * glm::vec4(m_Position, 0.0f));
@@ -89,8 +89,9 @@ void Camera::CalculateProjection()
 
 void Camera::CalculateView()
 {
-    glm::vec3 Position = glm::vec3(m_Matrix * glm::vec4(m_Position, 1.0f));
-    glm::vec3 Target = glm::vec3(m_Matrix * glm::vec4(m_Target, 1.0f));
+    glm::vec3 Position = glm::vec3(m_matrix * glm::vec4(m_position, 1.0f));
+    glm::vec3 Target = glm::vec3(m_matrix * glm::vec4(m_target, 1.0f));
+    //glm::vec3 Up = glm::vec3(m_matrix * glm::vec4(m_up, 1.0f));
     m_View = glm::lookAt(Position, Target, m_Up);
 }
 
@@ -98,9 +99,9 @@ void Camera::CreateModel()
 {
     CModel::S_MODEL_DESC desc;
     desc.strName = "Camera";
-    //desc.S_MODEL_COLUMN_DESC.start = m_Position;
-    //desc.S_MODEL_COLUMN_DESC.normal = glm::normalize(m_Position - m_Target);
-    //desc.S_MODEL_COLUMN_DESC.length = 1.0f;
+    desc.S_MODEL_COLUMN_DESC.start = glm::vec3(0.0f, 0.0f, 0.0f);
+    desc.S_MODEL_COLUMN_DESC.normal = glm::vec3(0.0f, 0.0f, 1.0f);
+    desc.S_MODEL_COLUMN_DESC.length = 1.0f;
 
     std::shared_ptr<CModel> model = CModelLoader::LoadModel(CModel::E_MODEL_COLUMN, desc);
     if (nullptr == model) {
@@ -109,23 +110,32 @@ void Camera::CreateModel()
     }
     m_ModelId = SceneGraph::GetInstance().CreateModel(*model.get());
 
-    
-    // 计算旋转向量
-    glm::vec3 zAxis = glm::normalize(m_Position - m_Target); // 摄像机正后方 (+Z)
-    glm::vec3 xAxis = glm::normalize(glm::cross(m_Up, zAxis)); // 摄像机右方 (+X)
-    glm::vec3 yAxis = glm::cross(zAxis, xAxis); // 摄像机上方 (+Y)
-    glm::mat3 rotationMat;
-    rotationMat[0] = xAxis; // 第一列
-    rotationMat[1] = yAxis; // 第二列
-    rotationMat[2] = zAxis; // 第三列
-    // 直接转换为四元数
-    glm::quat rotationQuat = glm::quat_cast(rotationMat);
+    glm::mat4 invView = glm::inverse(glm::lookAt(m_Position, m_Target, m_Up));
+    // 平移项链
+    glm::vec3 translation = glm::vec3(invView[3]);
+    // 缩放向量
+    glm::vec3 scale;
+    scale.x = glm::length(glm::vec3(invView[0]));
+    scale.y = glm::length(glm::vec3(invView[1]));
+    scale.z = glm::length(glm::vec3(invView[2]));
+    // 先移除缩放
+    glm::mat3 rotationMatrix;
+    rotationMatrix[0] = glm::vec3(invView[0]) / scale.x;
+    rotationMatrix[1] = glm::vec3(invView[1]) / scale.y;
+    rotationMatrix[2] = glm::vec3(invView[2]) / scale.z;
+    glm::quat rotationQuat = glm::quat_cast(rotationMatrix);
     
     auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
-    Transform.translation.set(m_Position);
-    Transform.rotation.set(rotationQuat);
+    Transform.translation.set(translation);
+    Transform.rotation.set(rotationMatrix);
+    Transform.scale.set(scale);
     Transform.matrix.setCallback(Callback);
     Transform.matrix.setPayload((void*)this);
+
+    glm::mat4 view = glm::lookAt(m_Position, m_Target, m_Up);
+    m_position = view * glm::vec4(m_Position, 1.0f);
+    m_target = view * glm::vec4(m_Target, 1.0f);
+    m_up = view * glm::vec4(m_Up, 1.0f);
 }
 
 void Camera::Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload)
@@ -134,6 +144,6 @@ void Camera::Callback(const glm::mat4& old_value, const glm::mat4& new_value, vo
         return;
     }
     Camera* p = (Camera*)payload;
-    p->m_Matrix = new_value;
-    p->UpdateCamera();
+    p->m_matrix = new_value;
+    p->CalculateView();
 }
