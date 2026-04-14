@@ -46,11 +46,11 @@ public:
 	{
 		return m_Registry.view<Type...>();
 	}
-	bool EntityIsValid(entt::entity entity)
+	bool EntityIsValid(entt::entity entity) const
 	{
 		return m_Registry.valid(entity);
 	}
-	void Clear()
+	void Clear() 
 	{
 		m_Registry.clear();
 	}

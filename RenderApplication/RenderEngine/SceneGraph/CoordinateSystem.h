@@ -39,8 +39,6 @@ private:
 private:
 	void SetupCoordinateFlag();
 private:
-	void BindCallback();
-private:
 	std::shared_ptr<CoordinateAxes>		m_CoordAxesX;
 	std::shared_ptr<CoordinateAxes>		m_CoordAxesY;
 	std::shared_ptr<CoordinateAxes>		m_CoordAxesZ;
@@ -59,8 +57,6 @@ private:
 	std::shared_ptr<CoordinateArc>		m_CoordArcXZ1;
 	std::shared_ptr<CoordinateArc>		m_CoordArcXZ2;
 	std::shared_ptr<CoordinateArc>		m_CoordArcXZ3;
-private:
-	static void Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload);
 private:
 	entt::entity	m_BindId;
 public:

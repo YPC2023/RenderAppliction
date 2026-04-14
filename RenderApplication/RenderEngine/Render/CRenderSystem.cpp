@@ -4,14 +4,17 @@
 
 void CRenderSystem::Update(const CRenderContext& context, SceneGraph& scene)
 {
+	// 更新选中需要变换的对象
+	UpdateTransform(context, scene);
+
 	// 更新model层节点
 	UpdateModel(context, scene);
 
 	// 更新mesh层节点
 	UpdateMesh(context, scene);
 
-	//std::string strDetail = scene.GetRelationDetail();
-	//PRINTLOG("%s", strDetail.c_str());
+	// 更新摄像机内参
+	UpdateCamera(context, scene);
 }
 
 void CRenderSystem::Render(const CRenderContext& context, const SceneGraph& scene)
@@ -26,6 +29,27 @@ void CRenderSystem::Render(const CRenderContext& context, const SceneGraph& scen
 	}
 }
 
+void CRenderSystem::UpdateTransform(const CRenderContext& context, SceneGraph& scene)
+{
+	if (nullptr == context.m_CoordsSystem || 
+		entt::null == context.m_CoordsSystem->GetModelId() ||
+		!TransformEntitiesAreValide(context, scene)) {
+		return;
+	}
+	// 获取坐标系的变换矩阵
+	const auto& CoordsTransRelation = scene.GetCmpntTransformData(context.m_CoordsSystem->GetModelId());
+	for (auto entity : context.m_set_TransformId) {
+		// 坐标系自己不用变换（坐标系也是选中状态)
+		if (context.m_CoordsSystem->GetModelId() == entity) {
+			continue;
+		}
+		auto& TransRelation = scene.GetCmpntTransformData(entity);
+		TransRelation.translation = CoordsTransRelation.translation;
+		TransRelation.rotation = CoordsTransRelation.rotation;
+		TransRelation.scale = CoordsTransRelation.scale;
+	}
+}
+
 void CRenderSystem::UpdateModel(const CRenderContext& context, SceneGraph& scene)
 {
 	const std::vector<entt::entity> vecModel = scene.GetModelTopologyComponents();
@@ -36,15 +60,15 @@ void CRenderSystem::UpdateModel(const CRenderContext& context, SceneGraph& scene
 		glm::mat4 matrix(1.0f);
 		if (entt::null != CurrentRelation.parent) {
 			const auto& ParentTransform = scene.GetCmpntTransformData(CurrentRelation.parent);
-			matrix = ParentTransform.matrix.get();
+			matrix = ParentTransform.matrix;
 		}
 		// 查询节点的“变换”组件
 		auto& CurrentTransform = scene.GetCmpntTransformData(entity);
 		// 更新变换矩阵
-		matrix = glm::translate(matrix, CurrentTransform.translation.get());
-		matrix = matrix * glm::mat4_cast(CurrentTransform.rotation.get());
-		matrix = glm::scale(matrix, CurrentTransform.scale.get());
-		CurrentTransform.matrix.set(matrix);
+		CurrentTransform.matrix = glm::translate(matrix, CurrentTransform.translation);
+		CurrentTransform.matrix = CurrentTransform.matrix * glm::mat4_cast(CurrentTransform.rotation);
+		CurrentTransform.matrix = glm::scale(CurrentTransform.matrix, CurrentTransform.scale);
+		;
 
 		// 更新选中的ID
 		if (CurrentRelation.selected_with_parent && entt::null != CurrentRelation.parent) {
@@ -74,15 +98,15 @@ void CRenderSystem::UpdateMesh(const CRenderContext& context, SceneGraph& scene)
 		auto& CurrentRelation = scene.GetCmpntRelationModel(entity);
 		// 查询节点的“变换”组件
 		auto& CurrentTransform = scene.GetCmpntTransformData(entity);
-		glm::mat4 baseMatrix(1.0f);
+		glm::mat4 matrix(1.0f);
 		if (entt::null != CurrentRelation.parent) {
 			const auto& ParentTransform = scene.GetCmpntTransformData(CurrentRelation.parent);
-			baseMatrix = ParentTransform.matrix.get();
+			matrix = ParentTransform.matrix;
 		}
 		// 更新变换矩阵
-		CurrentTransform.matrix.set(glm::translate(baseMatrix, CurrentTransform.translation.get()));
-		CurrentTransform.matrix.set(CurrentTransform.matrix.get()* glm::mat4_cast(CurrentTransform.rotation.get()));
-		CurrentTransform.matrix.set(glm::scale(CurrentTransform.matrix.get(), CurrentTransform.scale.get()));
+		CurrentTransform.matrix = glm::translate(matrix, CurrentTransform.translation);
+		CurrentTransform.matrix = CurrentTransform.matrix * glm::mat4_cast(CurrentTransform.rotation);
+		CurrentTransform.matrix = glm::scale(CurrentTransform.matrix , CurrentTransform.scale);
 
 		// 更新选中的ID
 		auto& CurrentRelationTransform = scene.GetCmpntRelationTransform(entity);
@@ -92,6 +116,17 @@ void CRenderSystem::UpdateMesh(const CRenderContext& context, SceneGraph& scene)
 		// 更新变换ID
 		CurrentRelationTransform.transform_id = ParentRelation.transform_id;
 	}
+}
+
+void CRenderSystem::UpdateCamera(const CRenderContext& context, SceneGraph& scene)
+{
+	// 获取摄像机ID
+	entt::entity camera = context.m_Camera->GetModelId();
+	if (entt::null == camera) {
+		return;
+	}
+	const auto& TransRelation = scene.GetCmpntTransformData(camera);
+	context.m_Camera->UpdateView();
 }
 
 void CRenderSystem::RenderMesh(const CRenderContext& context, 
@@ -127,7 +162,7 @@ void CRenderSystem::RenderMesh(const CRenderContext& context,
 	const auto& mesh = scene.GetCmpntMesh(entity);
 	const auto& Transform = scene.GetCmpntTransformData(entity);
 
-	material->m_shader->setMat4("model", Transform.matrix.get());
+	material->m_shader->setMat4("model", Transform.matrix);
 	//PrintMat4(Transform.matrix.get());
 	// 激活纹理
 	ActiveTexture(context, material, mesh);
@@ -179,6 +214,16 @@ void CRenderSystem::SetRenderId(const CRenderContext& context,
 	float v1 = (float)((ID >> 8) & 0xFF);
 	float v0 = (float)(ID & 0xFF);
 	material->m_shader->setVec4("objectID", glm::vec4(v0 / 255, v1 / 255, v2 / 255, v3 / 255));
+}
+
+bool CRenderSystem::TransformEntitiesAreValide(const CRenderContext& context, const SceneGraph& scene)
+{
+	for (auto entity : context.m_set_SelectedId) {
+		if (!scene.EntityIsValid(entity)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 std::string CRenderSystem::FormatVec3(const glm::vec3& value)

@@ -26,12 +26,15 @@ public:
 private:
     void UpdateCamera();
     void SetupCamera();
-    void CalculateProjection();
-    void CalculateView();
+    void UpdateProjection();
+public:
+    void UpdateView();
+private:
+    void SetTransformData(const glm::mat4& matrix);
+    glm::mat4 GetTransformData();
+
 private:
     void CreateModel();
-private:
-    static void Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload);
 private:
     glm::vec3   m_Position;
     glm::vec3   m_Target;
@@ -40,7 +43,6 @@ private:
     glm::vec3   m_position;
     glm::vec3   m_target;
     glm::vec3   m_up;
-    glm::mat4   m_matrix;
 
     int     m_nWidth;
     int     m_nHeight;

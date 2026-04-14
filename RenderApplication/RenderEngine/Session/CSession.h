@@ -55,6 +55,9 @@ private:
 	void ResetTransformInfo();
 	void ConstructRenderContext(CRenderSystem::CRenderContext& context);
 private:
+	bool CurrentIsTransformSatus();
+	entt::entity GetCurrentTransformEntity();
+private:
 	void OnModelSelectedAction(int x, int y);
 	void OnModelTranslateActionBegin(int x, int y);
 	void OnModelTranslateActionEnd(int x, int y);

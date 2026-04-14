@@ -264,6 +264,30 @@ void CSession::ConstructRenderContext(CRenderSystem::CRenderContext& context)
 
 	context.m_Camera = m_camera;
 	context.m_set_SelectedId = m_set_SelectedId;
+	context.m_set_TransformId = m_set_TransformId;
+	context.m_CoordsSystem = m_CoordSystem;
+}
+
+bool CSession::CurrentIsTransformSatus()
+{
+	// 必须只选择了2个对象，并且有个对象是坐标系（不能直接移动对象，都通过坐标系间接移动）
+	if (2 != m_set_TransformId.size()) {
+		return false;
+	}
+	if (0 == m_set_TransformId.count(m_CoordSystem->GetModelId())) {
+		return false;
+	}
+	return true;
+}
+
+entt::entity CSession::GetCurrentTransformEntity()
+{
+	for (auto entity : m_set_TransformId) {
+		if (m_CoordSystem->GetModelId() != entity) {
+			return entity;
+		}
+	}
+	return entt::null;
 }
 
 void CSession::OnModelSelectedAction(int x, int y)
@@ -308,8 +332,10 @@ void CSession::OnModelSelectedAction(int x, int y)
 			m_set_SelectedId.insert(selected_id);
 			const auto& RelationTrasfrom = SceneGraph::GetInstance().GetCmpntRelationTransform(selected_id);
 			m_set_TransformId.insert(RelationTrasfrom.transform_id);
-			// 绑定坐标系
-			m_CoordSystem->BindModel(selected_id);
+			if (RelationTrasfrom.transform_id != m_CoordSystem->GetModelId()) {
+				// 绑定坐标系
+				m_CoordSystem->BindModel(RelationTrasfrom.transform_id);
+			}
 		}
 		else {
 			m_set_SelectedId.clear();
@@ -321,16 +347,16 @@ void CSession::OnModelSelectedAction(int x, int y)
 
 void CSession::OnModelTranslateActionBegin(int x, int y)
 {
-	if (1 != m_set_TransformId.size()) {
+	if (!CurrentIsTransformSatus()) {
 		return;
 	}
-	entt::entity pickedId = *m_set_TransformId.begin();
+	entt::entity pickedId = m_CoordSystem->GetModelId();
 	if (!SceneGraph::GetInstance().HaveComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(pickedId)) {
 		return;
 	}
 	auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(pickedId);
 
-	m_ModelPosition = Transform.translation.get();
+	m_ModelPosition = Transform.translation;
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	m_StartPosition = GetMovementOnAxis(rayDir, m_camera->GetPosition(), m_ModelPosition, m_AxisTransform);
 }
@@ -341,10 +367,10 @@ void CSession::OnModelTranslateActionEnd(int x, int y)
 
 void CSession::OnModelTranslateActionIng(int x, int y)
 {
-	if (1 != m_set_TransformId.size()) {
+	if (!CurrentIsTransformSatus()) {
 		return;
 	}
-	entt::entity pickedId = *m_set_TransformId.begin();
+	entt::entity pickedId = m_CoordSystem->GetModelId();
 	if (!SceneGraph::GetInstance().HaveComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(pickedId)) {
 		return;
 	}
@@ -353,15 +379,15 @@ void CSession::OnModelTranslateActionIng(int x, int y)
 	m_bLeftMouseMoved = true;
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	float current = GetMovementOnAxis(rayDir, m_camera->GetPosition(), m_ModelPosition, m_AxisTransform);
-	Transform.translation.set(m_ModelPosition + m_AxisTransform * (m_StartPosition - current));
+	Transform.translation = m_ModelPosition + m_AxisTransform * (m_StartPosition - current);
 }
 
 void CSession::OnModelRotateActionBegin(int x, int y)
 {
-	if (1 != m_set_TransformId.size()) {
+	if (!CurrentIsTransformSatus()) {
 		return;
 	}
-	entt::entity pickedId = *m_set_TransformId.begin();
+	entt::entity pickedId = m_CoordSystem->GetModelId();
 	if (!SceneGraph::GetInstance().HaveComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(pickedId)) {
 		return;
 	}
@@ -369,7 +395,7 @@ void CSession::OnModelRotateActionBegin(int x, int y)
 
 	glm::vec3 rayDir = GetRayDirection(m_camera->GetWidth(), m_camera->GetHeight(), x, y, m_camera->GetView(), m_camera->GetProjection());
 	glm::vec3 intersection;
-	m_ModelPosition = Transform.translation.get();
+	m_ModelPosition = Transform.translation;
 
 	if (GetRayPlaneIntersection(m_camera->GetPosition(), rayDir, m_ModelPosition, m_AxisTransform, intersection)) {
 		// A. 保存点击时的初始方位角
@@ -384,10 +410,10 @@ void CSession::OnModelRotateActionEnd(int x, int y)
 
 void CSession::OnModelRotateActionIng(int x, int y)
 {
-	if (1 != m_set_TransformId.size()) {
+	if (!CurrentIsTransformSatus()) {
 		return;
 	}
-	entt::entity pickedId = *m_set_TransformId.begin();
+	entt::entity pickedId = m_CoordSystem->GetModelId();
 	if (!SceneGraph::GetInstance().HaveComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(pickedId)) {
 		return;
 	}
@@ -406,17 +432,17 @@ void CSession::OnModelRotateActionIng(int x, int y)
 		//PRINTLOG("%f", deltaAngle);
 		// E. 构造增量四元数，并叠加到初始姿态上
 		glm::quat deltaQuat = glm::angleAxis(deltaAngle, glm::normalize(m_AxisTransform));
-		Transform.rotation.set(deltaQuat);
+		Transform.rotation = deltaQuat;
 		m_bLeftMouseMoved = true;
 	}
 }
 
 void CSession::OnMouseWheel(float delta)
 {
-	if (1 != m_set_TransformId.size()) {
+	if (!CurrentIsTransformSatus()) {
 		return;
 	}
-	entt::entity pickedId = *m_set_TransformId.begin();
+	entt::entity pickedId = m_CoordSystem->GetModelId();
 	if (!SceneGraph::GetInstance().HaveComponent<SGCmpnt::S_CMPNT_RELATION_TRANSFORM>(pickedId)) {
 		return;
 	}
@@ -425,11 +451,11 @@ void CSession::OnMouseWheel(float delta)
 	// 前滚放大(delta>0)，后滚缩小(delta<0)
 	float scaleDelta = delta * 0.1f;
 
-	glm::vec3 currentScale = Transform.scale.get();
+	glm::vec3 currentScale = Transform.scale;
 	float newScale = currentScale.x + scaleDelta;
 	if (newScale < 0.1f) newScale = 0.1f;
 	if (newScale > 10.0f) newScale = 10.0f;
-	Transform.scale.set(glm::vec3(newScale, newScale, newScale));
+	Transform.scale = glm::vec3(newScale, newScale, newScale);
 }
 
 void CSession::OnMouseLeftPress(int x, int y)

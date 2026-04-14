@@ -8,7 +8,6 @@ CoordinateSystem::CoordinateSystem()
 	m_ModelId = SetupCoondinateSystem();
 	// 给场景图的坐标轴节点设置标志
 	SetupCoordinateFlag();
-	BindCallback();
 }
 
 CoordinateSystem::~CoordinateSystem()
@@ -141,12 +140,9 @@ void CoordinateSystem::BindModel(entt::entity entity)
 
 	auto& CoordTransformData = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
 	const auto& ModelTransformData = SceneGraph::GetInstance().GetCmpntTransformData(entity);
-	CoordTransformData.translation.set(ModelTransformData.translation.get());
-	CoordTransformData.rotation.set(ModelTransformData.rotation.get());
-	CoordTransformData.scale.set(ModelTransformData.scale.get());
-	//m_CoordAxesX->SetTransformData(TransformData);
-	//m_CoordAxesY->SetTransformData(TransformData);
-	//m_CoordAxesZ->SetTransformData(TransformData);
+	CoordTransformData.translation = ModelTransformData.translation;
+	CoordTransformData.rotation = ModelTransformData.rotation;
+	CoordTransformData.scale = ModelTransformData.scale;
 }
 
 void CoordinateSystem::UnBindModel()
@@ -446,23 +442,4 @@ void CoordinateSystem::SetupCoordinateFlag()
 	for (auto entity : setNode) {
 		SceneGraph::GetInstance().AppendComponent<SGCmpnt::S_CMPNT_COORDINATE_FLAG>(entity);
 	}
-}
-
-void CoordinateSystem::BindCallback()
-{
-	if (entt::null != m_ModelId) 
-	{
-		auto& Tranform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
-		Tranform.matrix.setCallback(Callback);
-		Tranform.matrix.setPayload((void*)this);
-	}
-	
-}
-
-void CoordinateSystem::Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload)
-{
-	if (0 == payload) {
-		return;
-	}
-	CoordinateSystem* p = (CoordinateSystem*)payload;
 }

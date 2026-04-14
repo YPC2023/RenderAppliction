@@ -13,7 +13,6 @@ Camera::Camera()
     m_Position = ConfigSystem::GetCameraPos();
     m_Up = ConfigSystem::GetCameraUp();
     m_Target = ConfigSystem::GetCameraTarget();
-    m_matrix = glm::mat4(1.0f);
 
     glm::mat4 rollMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(index++ * 130.0f), m_Up);
     m_Position = glm::vec3(rollMatrix * glm::vec4(m_Position, 0.0f));
@@ -72,27 +71,57 @@ const glm::mat4& Camera::GetProjection() const
 
 void Camera::UpdateCamera()
 {
-    CalculateView();
-    CalculateProjection();
+    UpdateView();
+    UpdateProjection();
 }
 
 void Camera::SetupCamera()
 {
-    UpdateCamera();
     CreateModel();
+    UpdateCamera();
 }
 
-void Camera::CalculateProjection()
+void Camera::UpdateProjection()
 {
     m_Projection = glm::perspective(glm::radians(m_Fov), ((float)m_nWidth / m_nHeight), m_Near, m_Far);
 }
 
-void Camera::CalculateView()
+void Camera::UpdateView()
 {
-    glm::vec3 Position = glm::vec3(m_matrix * glm::vec4(m_position, 1.0f));
-    glm::vec3 Target = glm::vec3(m_matrix * glm::vec4(m_target, 1.0f));
+    glm::mat4 matrix = GetTransformData();
+
+    glm::vec3 Position = glm::vec3(matrix * glm::vec4(m_position, 1.0f));
+    glm::vec3 Target = glm::vec3(matrix * glm::vec4(m_target, 1.0f));
     //glm::vec3 Up = glm::vec3(m_matrix * glm::vec4(m_up, 1.0f));
     m_View = glm::lookAt(Position, Target, m_Up);
+}
+
+void Camera::SetTransformData(const glm::mat4& matrix)
+{
+    // 平移项链
+    glm::vec3 translation = glm::vec3(matrix[3]);
+    // 缩放向量
+    glm::vec3 scale;
+    scale.x = glm::length(glm::vec3(matrix[0]));
+    scale.y = glm::length(glm::vec3(matrix[1]));
+    scale.z = glm::length(glm::vec3(matrix[2]));
+    // 先移除缩放
+    glm::mat3 rotationMatrix;
+    rotationMatrix[0] = glm::vec3(matrix[0]) / scale.x;
+    rotationMatrix[1] = glm::vec3(matrix[1]) / scale.y;
+    rotationMatrix[2] = glm::vec3(matrix[2]) / scale.z;
+    glm::quat rotationQuat = glm::quat_cast(rotationMatrix);
+
+    auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
+    Transform.translation = translation;
+    Transform.rotation = rotationMatrix;
+    Transform.scale = scale;
+}
+
+glm::mat4 Camera::GetTransformData()
+{
+    auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
+    return Transform.matrix;
 }
 
 void Camera::CreateModel()
@@ -111,39 +140,10 @@ void Camera::CreateModel()
     m_ModelId = SceneGraph::GetInstance().CreateModel(*model.get());
 
     glm::mat4 invView = glm::inverse(glm::lookAt(m_Position, m_Target, m_Up));
-    // 平移项链
-    glm::vec3 translation = glm::vec3(invView[3]);
-    // 缩放向量
-    glm::vec3 scale;
-    scale.x = glm::length(glm::vec3(invView[0]));
-    scale.y = glm::length(glm::vec3(invView[1]));
-    scale.z = glm::length(glm::vec3(invView[2]));
-    // 先移除缩放
-    glm::mat3 rotationMatrix;
-    rotationMatrix[0] = glm::vec3(invView[0]) / scale.x;
-    rotationMatrix[1] = glm::vec3(invView[1]) / scale.y;
-    rotationMatrix[2] = glm::vec3(invView[2]) / scale.z;
-    glm::quat rotationQuat = glm::quat_cast(rotationMatrix);
-    
-    auto& Transform = SceneGraph::GetInstance().GetCmpntTransformData(m_ModelId);
-    Transform.translation.set(translation);
-    Transform.rotation.set(rotationMatrix);
-    Transform.scale.set(scale);
-    Transform.matrix.setCallback(Callback);
-    Transform.matrix.setPayload((void*)this);
+    SetTransformData(invView);
 
     glm::mat4 view = glm::lookAt(m_Position, m_Target, m_Up);
     m_position = view * glm::vec4(m_Position, 1.0f);
     m_target = view * glm::vec4(m_Target, 1.0f);
     m_up = view * glm::vec4(m_Up, 1.0f);
-}
-
-void Camera::Callback(const glm::mat4& old_value, const glm::mat4& new_value, void* payload)
-{
-    if (0 == payload) {
-        return;
-    }
-    Camera* p = (Camera*)payload;
-    p->m_matrix = new_value;
-    p->CalculateView();
 }

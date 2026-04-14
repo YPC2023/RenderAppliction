@@ -26,11 +26,11 @@ namespace SGCmpnt
 	};
 	struct S_CMPNT_TRANSFORM_DATA
 	{
-		VarWatcher<glm::vec3>	translation = VarWatcher<glm::vec3>(glm::vec3(0.0f));
-		VarWatcher<glm::quat>	rotation = VarWatcher<glm::quat>(glm::vec3(0.0f));
-		VarWatcher<glm::vec3>	scale = VarWatcher<glm::vec3>(glm::vec3(1.0f));
-		bool					dirty = true;
-		VarWatcher<glm::mat4>	matrix = VarWatcher<glm::mat4>(glm::mat4(1.0f));
+		glm::vec3	translation = glm::vec3(0.0f);
+		glm::quat	rotation = glm::vec3(0.0f);
+		glm::vec3	scale = glm::vec3(1.0f);
+		bool		dirty = true;
+		glm::mat4	matrix = glm::mat4(1.0f);
 	};
 	struct S_CMPNT_MODEL
 	{
