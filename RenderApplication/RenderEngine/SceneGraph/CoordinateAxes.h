@@ -18,11 +18,8 @@ public:
 public:
 	CoordinateAxes(const S_COORDS_DESC& desc, const std::string& strName = "");
 	~CoordinateAxes();
-public:
-	void SetTransformData(const SGCmpnt::S_CMPNT_TRANSFORM_DATA& Data);
 private:
 	entt::entity SetupCoordinateAxes();
-	void SetupCoordinateFlag();
 
 public:
 	S_COORDS_DESC	m_desc;

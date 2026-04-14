@@ -6,8 +6,6 @@ CoordinateAxes::CoordinateAxes(const S_COORDS_DESC& desc, const std::string& str
 	: m_desc(desc), m_strName(strName)
 {
 	m_ModelId = SetupCoordinateAxes();
-	// 给场景图的坐标轴节点设置标志
-	SetupCoordinateFlag();
 }
 
 CoordinateAxes::~CoordinateAxes()
@@ -18,25 +16,14 @@ CoordinateAxes::~CoordinateAxes()
 	}
 }
 
-void CoordinateAxes::SetTransformData(const SGCmpnt::S_CMPNT_TRANSFORM_DATA& Data)
-{
-	std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
-	for (auto entity : setNode) {
-		auto& TransformData = SceneGraph::GetInstance().GetCmpntTransformData(entity);
-		TransformData.translation.set(Data.translation.get());
-		TransformData.rotation.set(Data.rotation.get());
-		TransformData.scale.set(Data.scale.get());
-	}
-}
-
 entt::entity CoordinateAxes::SetupCoordinateAxes()
 {
 	// 坐标轴圆柱体
 	CModel::S_MODEL_DESC descColumn;
 	descColumn.strName = (std::string("COLUMN_") + m_strName);
-	descColumn.S_MODEL_COLUMN_DESC.start = m_desc.start;
+	descColumn.S_MODEL_COLUMN_DESC.start = m_desc.start - m_desc.normal * m_desc.length;
 	descColumn.S_MODEL_COLUMN_DESC.normal = m_desc.normal;
-	descColumn.S_MODEL_COLUMN_DESC.length = m_desc.length;
+	descColumn.S_MODEL_COLUMN_DESC.length = m_desc.length * 2.0f;
 	descColumn.S_MODEL_COLUMN_DESC.radius = m_desc.radius;
 	descColumn.S_MODEL_COLUMN_DESC.sColor = m_desc.color;
 	descColumn.S_MODEL_COLUMN_DESC.eColor = m_desc.color;
@@ -66,10 +53,3 @@ entt::entity CoordinateAxes::SetupCoordinateAxes()
 	return entityColumn;
 }
 
-void CoordinateAxes::SetupCoordinateFlag()
-{
-	std::set<entt::entity> setNode = SceneGraph::GetInstance().GetModelTransformComponents(m_ModelId);
-	for (auto entity : setNode) {
-		SceneGraph::GetInstance().AppendComponent<SGCmpnt::S_CMPNT_COORDINATE_FLAG>(entity);
-	}
-}

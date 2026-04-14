@@ -32,6 +32,7 @@ private:
 	bool CreateModelSphere();
 	bool CreateModelCone();
 	bool CreateModelTorus();
+	bool CreateModelRingArc();
 	bool CreateCoordinateAxes();
 	entt::entity CreateCoordinateAxesX();
 	entt::entity CreateCoordinateAxesY();

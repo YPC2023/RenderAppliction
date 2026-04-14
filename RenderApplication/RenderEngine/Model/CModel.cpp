@@ -25,6 +25,9 @@ CModel::CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc)
     case E_MODEL_TORUS:
         m_ok = InitializeTorus();
         break;
+    case E_MODEL_RINGARC:
+        m_ok = InitializeRingArc();
+        break;
     }
     m_strName = desc.strName;
 }
@@ -285,6 +288,123 @@ bool CModel::InitializeTorus()
 
     m_vec_mesh.push_back(CMesh(vertices, indices, m_desc.vertexResize, m_desc.textureResize));
     return true;
+}
+
+bool CModel::InitializeRingArc()
+{
+    std::vector<CMesh::S_VERTEX>	vertices;
+    std::vector<unsigned int>	indices;
+    GenerateRingArc(vertices, indices,
+        m_desc.S_MODEL_RINGARC_DESC.center,
+        m_desc.S_MODEL_RINGARC_DESC.outerRadius,
+        m_desc.S_MODEL_RINGARC_DESC.ringWidth,
+        m_desc.S_MODEL_RINGARC_DESC.startAngle,
+        m_desc.S_MODEL_RINGARC_DESC.endAngle,
+        m_desc.S_MODEL_RINGARC_DESC.sColor,
+        m_desc.S_MODEL_RINGARC_DESC.eColor,
+        m_desc.S_MODEL_RINGARC_DESC.refVector,
+        m_desc.S_MODEL_RINGARC_DESC.normal,
+        m_desc.S_MODEL_RINGARC_DESC.arcSegments,
+        m_desc.S_MODEL_RINGARC_DESC.tubeSegments
+        );
+
+    m_vec_mesh.push_back(CMesh(vertices, indices, m_desc.vertexResize, m_desc.textureResize));
+    return true;
+}
+
+/**
+ * 生成圓柱形圓環網格數據 (Arc Tube Mesh)
+ *
+ * @param outVertices  [輸出] 頂點數據容器，函數會清空並填充 S_VERTEX 結構
+ * @param outIndices   [輸出] 索引數據容器，填充用於 GL_TRIANGLES 繪製的索引
+ * @param center       [輸入] 圓環的中心點坐標 (glm::vec3)
+ * @param outerRadius  [輸入] 外環半徑：從中心點到管子中心線的距離
+ * @param width        [輸入] 圓環管徑寬度：即管子的直徑 (會自動除以2計算內徑)
+ * @param startAngle   [輸入] 起始角度：相對於 refVector 的旋轉角度 (角度制)
+ * @param endAngle     [輸入] 結束角度：圓弧終點的角度 (角度制)
+ * @param startColor   [默認] 起始處頂點顏色 (RGBA)
+ * @param endColor     [默認] 結束處頂點顏色 (RGBA)，會隨角度自動線性插值
+ * @param refVector    [默認] 參考向量：定義 0 度角指向的方向 (默認為 X 軸)
+ * @param normal       [默認] 平面法向量：定義圓環所在的平面與旋轉軸 (默認為 Z 軸)
+ * @param arcSegments  [默認] 圓弧方向細分：數值越大圓弧邊緣越平滑
+ * @param tubeSegments [默認] 管徑截面細分：數值越大管子越圓潤
+ */
+void CModel::GenerateRingArc(
+    std::vector<CMesh::S_VERTEX>& outVertices,
+    std::vector<unsigned int>& outIndices,
+    glm::vec3 center,
+    float outerRadius,
+    float width,
+    float startAngle,
+    float endAngle,
+    glm::vec4 startColor,
+    glm::vec4 endColor,
+    glm::vec3 refVector,
+    glm::vec3 normal,
+    int arcSegments,
+    int tubeSegments
+) {
+    // 初始化清空
+    outVertices.clear();
+    outIndices.clear();
+
+    // 基礎參數計算
+    float innerRadius = width / 2.0f;
+    glm::vec3 u = glm::normalize(refVector);           // 0度方向基向量
+    glm::vec3 n = glm::normalize(normal);              // 平面法線
+    glm::vec3 v = glm::normalize(glm::cross(n, u));    // 90度方向基向量
+
+    float startRad = glm::radians(startAngle);
+    float endRad = glm::radians(endAngle);
+    float arcStep = (endRad - startRad) / (float)arcSegments;
+    float tubeStep = 2.0f * glm::pi<float>() / (float)tubeSegments;
+
+    // 1. 生成頂點 (沿圓弧循環 -> 沿截面圓循環)
+    for (int i = 0; i <= arcSegments; ++i) {
+        float theta = startRad + i * arcStep;
+        float t = (float)i / (float)arcSegments; // 角度進度 (0~1)
+
+        // 顏色插值
+        glm::vec4 currentColor = glm::mix(startColor, endColor, t);
+
+        // 當前採樣點的管中心位置與局部坐標系
+        glm::vec3 pCenter = center + outerRadius * (std::cos(theta) * u + std::sin(theta) * v);
+        glm::vec3 tangent = glm::normalize(-std::sin(theta) * u + std::cos(theta) * v);
+        glm::vec3 bitangent = glm::cross(tangent, n);
+
+        for (int j = 0; j <= tubeSegments; ++j) {
+            float phi = j * tubeStep;
+            glm::vec3 surfaceNormal = std::cos(phi) * bitangent + std::sin(phi) * n;
+
+            CMesh::S_VERTEX vertex;
+            vertex.Position = pCenter + innerRadius * surfaceNormal;
+            vertex.Normal = surfaceNormal;
+            vertex.Color = currentColor;
+            vertex.TexCoords = glm::vec2(t, (float)j / tubeSegments); // U為長度, V為環周
+            vertex.Tangent = tangent;
+            vertex.Bitangent = glm::cross(vertex.Normal.get(), vertex.Tangent.get());
+
+            outVertices.push_back(vertex);
+        }
+    }
+
+    // 2. 生成索引 (建構三角形面片)
+    for (int i = 0; i < arcSegments; ++i) {
+        for (int j = 0; j < tubeSegments; ++j) {
+            unsigned int currRow = i * (tubeSegments + 1);
+            unsigned int nextRow = (i + 1) * (tubeSegments + 1);
+
+            // 第一個三角形 (V1 -> V2 -> V3)
+            outIndices.push_back(currRow + j);
+            outIndices.push_back(nextRow + j);
+            outIndices.push_back(currRow + j + 1);
+
+            // 第二個三角形 (V2 -> V4 -> V3)
+            outIndices.push_back(nextRow + j);
+            outIndices.push_back(nextRow + j + 1);
+            outIndices.push_back(currRow + j + 1);
+        }
+    }
 }
 
 void CModel::GenerateTorusVertex(const glm::vec3& center, const glm::vec3& axisNormal, const glm::vec4& color,

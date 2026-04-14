@@ -20,6 +20,7 @@ public:
 		E_MODEL_SPHERE,		// 球体 
 		E_MODEL_CONE,		// 圆锥体
 		E_MODEL_TORUS,		// 圆环
+		E_MODEL_RINGARC,	// 圆弧环
 	}E_MODEL_TYPE;
 	typedef struct _S_MODEL_DESC
 	{
@@ -65,6 +66,20 @@ public:
 			int mainSectors = 64;
 			int tubeSectors = 32;
 		}S_MODEL_TORUS_DESC;
+		struct _S_MODEL_RINGARC_DESC
+		{
+			glm::vec3 center = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+			glm::vec3 refVector = glm::vec3(1.0f, 0.0f, 0.0f);
+			float startAngle = 0.0f;
+			float endAngle = 90.0f;
+			float outerRadius = 3.0f;
+			float ringWidth = 0.1f;
+			glm::vec4 sColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			glm::vec4 eColor = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			int arcSegments = 64;
+			int tubeSegments = 16;
+		}S_MODEL_RINGARC_DESC;
 	}S_MODEL_DESC;
 public:
 	CModel(E_MODEL_TYPE type, const S_MODEL_DESC& desc);
@@ -81,8 +96,14 @@ private:
 	bool InitializeSphere();
 	bool InitializeCone();
 	bool InitializeTorus();
+	bool InitializeRingArc();
 
 private:
+	static void GenerateRingArc(std::vector<CMesh::S_VERTEX>& outVertices,
+		std::vector<unsigned int>& outIndices, glm::vec3 center, float outerRadius,
+		float width, float startAngle, float endAngle, glm::vec4 startColor,
+		glm::vec4 endColor, glm::vec3 refVector, glm::vec3 normal, int arcSegments,
+		int tubeSegments);
 	static void GenerateTorusVertex(const glm::vec3& center, const glm::vec3& axisDir, const glm::vec4& color,
 		float majorRadius, float minorRadius, int mainSectors, int tubeSectors,
 		std::vector<CMesh::S_VERTEX>& vertices, std::vector<unsigned int>& indices);

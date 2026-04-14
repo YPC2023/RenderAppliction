@@ -28,6 +28,10 @@ public:
             m_value = v;
             return *this;
         }
+        glm::vec2 get()
+        {
+            return m_value;
+        }
     private:
         glm::vec2   m_value;
     public:
@@ -50,6 +54,10 @@ public:
             m_value = v;
             return *this;
         }
+        glm::vec3 get()
+        {
+            return m_value;
+        }
     private:
         glm::vec3   m_value;
     public:
@@ -71,6 +79,10 @@ public:
             m_enable = true;
             m_value = v;
             return *this;
+        }
+        glm::vec4 get()
+        {
+            return m_value;
         }
     private:
         glm::vec4   m_value;

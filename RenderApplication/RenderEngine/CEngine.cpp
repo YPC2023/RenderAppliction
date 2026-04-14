@@ -39,7 +39,7 @@ bool CEngine::Initialize()
 		PRINTLOG("Fail to create CoordinateAxes");
 		return false;
 	} 
-	*/
+	
 	if (!CreateModelChess()) {
 		PRINTLOG("Fail to load chess model");
 		return false;
@@ -62,6 +62,11 @@ bool CEngine::Initialize()
 		return false;
 	}
 	
+	if (!CreateModelRingArc()) {
+		PRINTLOG("Fail to create ring arc model");
+		return false;
+	}
+	*/
 	return true;
 }
 
@@ -181,6 +186,20 @@ bool CEngine::CreateModelTorus()
 	CModel::S_MODEL_DESC desc;
 	desc.strName = "TORUS";
 	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_TORUS, desc);
+	if (nullptr == Model) {
+		PRINTLOG("Fail to load Model");
+		return false;
+	}
+	(void)SceneGraph::GetInstance().CreateModel(*Model.get());
+	return true;
+}
+
+bool CEngine::CreateModelRingArc()
+{
+	// 从文件加载模型文件
+	CModel::S_MODEL_DESC desc;
+	desc.strName = "RINGARC";
+	std::shared_ptr<CModel> Model = CModelLoader::LoadModel(CModel::E_MODEL_RINGARC, desc);
 	if (nullptr == Model) {
 		PRINTLOG("Fail to load Model");
 		return false;

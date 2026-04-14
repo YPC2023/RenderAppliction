@@ -108,6 +108,9 @@
     <ClInclude Include="SceneGraph\CoordinateSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="SceneGraph\CoordinateArc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -186,6 +189,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SceneGraph\CoordinateSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\CoordinateArc.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
