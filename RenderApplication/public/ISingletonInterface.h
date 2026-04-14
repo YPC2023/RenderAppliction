@@ -8,8 +8,16 @@ public:
     // 获取单例的全局访问点
     static T& GetInstance() {
         // C++11 后，静态局部变量是线程安全的
-        static T instance;
-        return instance;
+        if (nullptr == m_pInstance) {
+            m_pInstance = new T();
+        }
+        return *m_pInstance;
+    }
+    static void ReleaseInstance() {
+        if (nullptr != m_pInstance) {
+            delete m_pInstance;
+            m_pInstance = nullptr;
+        }
     }
 
     // 禁止拷贝和赋值
@@ -20,5 +28,10 @@ protected:
     // 构造函数设为 protected，防止外部直接实例化
     ISingletonInterface() = default;
     virtual ~ISingletonInterface() = default;
+
+private:
+    static T* m_pInstance;
 };
 
+template <typename T>
+T* ISingletonInterface<T>::m_pInstance = nullptr;
